@@ -1,5 +1,11 @@
 import numpy
-import networkx
+import networkx as nx
+import matplotlib.pyplot as plt
+
+#####
+# CONSTANTS
+MARKOV_MEMORY = 3
+
 
 class Urn:
     def __init__(self, key, R, B, M):
@@ -13,16 +19,16 @@ class Urn:
         self.Um = [R/(R+B), 0]  # red ball proportion in the urn, only ever need the value before and after each draw
         self.n = 0  # time
 
-    def timeStep(self, delta):  # execute next draw in process
-        self.n += 1  # increment time
-        self.nextZ()
-        self.nextDelta(delta)
-        self.nextU()
+    # def timeStep(self, delta):  # execute next draw in process
+    #     self.n += 1  # increment time
+    #     self.nextZ()
+    #     self.nextDelta(delta)
+    #     self.nextU()
 
-    def nextZ(self):
-        Z = numpy.random.choice([0, 1], p=[(1-self.Um[0]), self.Um[0]])  # draw red or black ball
-        self.Zn.pop()  # get rid of (n-M-1)th draw (since finite M memory)
-        self.Zn.insert(0, Z)  # insert nth draw info
+    # def nextZ(self):
+    #     Z = numpy.random.choice([0, 1], p=[(1-self.Um[0]), self.Um[0]])  # draw red or black ball
+    #     self.Zn.pop()  # get rid of (n-M-1)th draw (since finite M memory)
+    #     self.Zn.insert(0, Z)  # insert nth draw info
 
     def nextDelta(self, delta):
         self.delta.pop()
@@ -52,35 +58,90 @@ class Urn:
 
 
 class SuperUrn(Urn):
-    def __init__(self, key, R, B, M, N_list):
-        super(key, R, B, M)
-        self.Ni_list = [super()] + N_list
+    def __init__(self, key, R, B, M, G):
+        super().__init__(key, R, B, M)
+        self.Graph = G
+        self.Ni_key = [key] + list(nx.all_neighbors(G, key))
+        self.Ni_list = []
         self.super_R = 0
         self.super_B = 0
+        self.super_T = 0
+        self.Sm = []
+
+    def setInitialVariables(self):
+        for i in self.Ni_key:
+            self.Ni_list.append(self.Graph.nodes[i]['superUrn'])
         for urn in self.Ni_list:
             self.super_R += urn.R
             self.super_B += urn.B
         self.super_T = self.super_R + self.super_B
         self.Sm = [self.super_R/self.super_T, 0]
-        self.Z = 0
+
+
+    def drawBall(self):
+        Z = numpy.random.choice([0, 1], p=[(1 - self.Sm[0]), self.Sm[0]])  # draw red or black ball
+        self.Zn.pop()  # get rid of (n-M-1)th draw (since finite M memory)
+        self.Zn.insert(0, Z)  # insert nth draw info
+
 
     def nextSm(self):
         nominator = 0
         denominator = 0
         for urn in self.Ni_list:
-            nominator += super().Um[0] * (super().T + sum(super().delta))
-            denominator += super().T + sum(super().delta)
+            nominator += urn.Um[0] * (urn.T + sum(urn.delta))
+            denominator += urn.T + sum(urn.delta)
         self.Sm.pop()
         self.Sm.insert(0, nominator/denominator)
 
 
-def polya_simulation(R, B, delta, M, max_n):
+def createPolyaNetwork(n, m, R, B):
+    G = nx.barabasi_albert_graph(n, m)
+    for i in range(len(list(G.nodes))):
+        G.nodes[i]['superUrn'] = SuperUrn(i, R, B, MARKOV_MEMORY, G)
+    for i in range(len(list(G.nodes))):
+        G.nodes[i]['superUrn'].setInitialVariables()
+    return G
 
-    polyaUrn = Urn(1, R, B, M)
-    print("-----------------")
-    for n in range(max_n):  # run simulation for max_n total draws
-        polyaUrn.timeStep(delta)
-        polyaUrn.print_current_n()
+
+def networkTimeStep(G, delta):
+    for i in range(len(list(G.nodes))):
+        G.nodes[i]['superUrn'].drawBall()
+        G.nodes[i]['superUrn'].nextDelta(delta)
+        G.nodes[i]['superUrn'].nextU()
+        G.nodes[i]['superUrn'].nextSm()
+
+
+def printNetwork(G, t):
+    print('--- Time: ' + str(t) + ' --------------------')
+    for i in range(len(list(G.nodes))):
+        superUrn = G.nodes[i]['superUrn']
+        print("|| Urn " + str(superUrn.key) + ", U_n = {:.2%}, ".format(superUrn.Sm[1]), end='')
+        if superUrn.Zn[0] == 1:  # print last ball draw
+            print("Draw : Red\t", end='')
+        else:
+            print("Draw : Black\t", end='')
+    print('\n', end='')
+
+def network_simulation(R, B, delta, M, max_n, num_nodes, num_connections):
+    polya_network = createPolyaNetwork(num_nodes, num_connections, R, B)
+    for n in range(max_n):
+        networkTimeStep(polya_network, delta)
+        printNetwork(polya_network, n)
+
+    printGraph(polya_network)
+
+def printGraph(G):
+    nx.draw(G, cmap=plt.get_cmap('viridis'), with_labels=True, font_color='white')
+    plt.show()
+
+
+# def polya_simulation(R, B, delta, M, max_n):
+#
+#     polyaUrn = Urn(1, R, B, M)
+#     print("-----------------")
+#     for n in range(max_n):  # run simulation for max_n total draws
+#         polyaUrn.timeStep(delta)
+#         polyaUrn.print_current_n()
 
 
 #######################################
@@ -90,10 +151,11 @@ B = 5
 deltaB = 2
 deltaR = 2
 delta = [deltaB, deltaR]
-M = 3
-max_n = 100
-polya_simulation(R, B, delta, M, max_n)
-
+M = MARKOV_MEMORY
+max_n = 10
+num_nodes = 7
+num_connections = 3
+network_simulation(R, B, delta, M, max_n, num_nodes, num_connections)
 
 
 
