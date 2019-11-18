@@ -1,13 +1,12 @@
-
 import matplotlib.pyplot as plt
-import pandas as pd
 import csv
 
 
 def SIS_Model(adj, N, Ri, Bi):
     lmax = 5.05
     betaSIS=0.15 #probability that a node will get infected through contact with a single infected neighbor
-    deltaSIS= (lmax/10)*betaSIS  #probability that a node will recover from infection 
+    #deltaSIS= (lmax/10)*betaSIS  #probability that a node will recover from infection 
+    deltaSIS=betaSIS
     T=100
     P0 = [Ri/(Ri+Bi) for x in range(0, N)]
 
@@ -42,12 +41,9 @@ def graphInfection(T, avgInf):
     plt.ylabel("Infection Rate")
     plt.show()
 
-
-
 def main():
     data = list(csv.reader(open('network.csv')))
     N=200
-    network = pd.read_csv('network.csv',sep=',')
     T, avgInf = SIS_Model(data, N, 2, 3)
     graphInfection(T, avgInf)
 
