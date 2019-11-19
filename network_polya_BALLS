@@ -6,7 +6,7 @@ from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 from celluloid import Camera
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 
 #####
@@ -101,8 +101,8 @@ class SuperUrn(Urn):
         self.Sm.insert(0, nominator/denominator)  # update Sm
 
 
-def createPolyaNetwork(M, node_balls):  # generates graph and creates urns at every node
-    G = importGraph()
+def createPolyaNetwork(adjFile, M, node_balls):  # generates graph and creates urns at every node
+    G = importGraph(adjFile)
 
     for i in range(len(list(G.nodes))):  # set urn at every node
         R = node_balls[i][0]
@@ -163,10 +163,10 @@ def printNetwork(G, t,v,m):  # print network attributes
     print("Network Susceptibility: {:.2%}".format(m[2]), end='\n')
 
 
-def network_simulation(delta, M, max_n, node_balls):
-    polya_network = createPolyaNetwork(M, node_balls)  # create network of urns
+def network_simulation(adjFile, delta, M, max_n, node_balls):
+    polya_network = createPolyaNetwork(adjFile, M, node_balls)  # create network of urns
 
-    # infection_data = {}
+    #infection_data = {}
     disease_metrics = []
     print('polya time:')
     for n in range(max_n):  # run simulation for max_n steps
@@ -174,9 +174,9 @@ def network_simulation(delta, M, max_n, node_balls):
         v = networkTimeStep(polya_network, delta)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
         disease_metrics.append(m)
-        # infection_data[n] = {}
-        # for node in polya_network.nodes:
-            # infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
+        #infection_data[n] = {}
+        #for node in polya_network.nodes:
+            #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
         # printNetwork(polya_network, n,v,m)  # print network attributes
     #update_graph(polya_network, infection_data)
 
@@ -186,7 +186,7 @@ def network_simulation(delta, M, max_n, node_balls):
 #   printGraph(polya_network, colour)  # print graph for reference
 
 
-def update_graph(G,data):
+def update_graph(G, data):
     fig = plt.figure()
     camera = Camera(fig)
     layout = nx.spring_layout(G)
@@ -225,8 +225,8 @@ def update_graph(G,data):
 #         polyaUrn.timeStep(delta)
 #         polyaUrn.print_current_n()
 
-def importGraph():
-    bigG = nx.from_numpy_matrix(pd.read_csv("testGraph.csv", header=None).as_matrix())
+def importGraph(adjFile):
+    bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
     return bigG
 #######################################
 # PARAMETER INPUT
@@ -241,7 +241,8 @@ def main():
     max_n = 200
     num_nodes = 7
     num_connections = 3
-    network_simulation(delta, M, max_n, [])
+    adjFile = '100_node_adj.csv'
+    network_simulation(adjFile, delta, M, max_n, [])
 
 
 
