@@ -43,23 +43,24 @@ def SIS_Model(adj, N, init, plot):
 
 def graphInfection(T, avgInf):
     tVal = [x for x in range(0,T)]
-    plt.figure(1)
+    plt.figure()
     plt.plot(tVal, avgInf)
     plt.title("SIS Infection Rate")
     plt.xlabel("Time t")
     plt.ylabel("Infection Rate")
-    plt.show()
+    #plt.show()
 
 def main():
     data = pd.read_csv('100_node_adj.csv', header=None)
-    prop = list(csv.reader(open('ball_proportions.csv')))
+    prop = list(csv.reader(open('ball_proportions_100_nodes.csv'), delimiter='\t'))
     N=100
-    T, avgInf = SIS_Model(data, N, prop, 'a')
-    graphInfection(T, avgInf)
-    T, avgInf = SIS_Model(data, N, prop, 'b')
-    graphInfection(T, avgInf)
-    T, avgInf = SIS_Model(data, N, prop, 'c')
-    graphInfection(T, avgInf)
+    T, avgInfa = SIS_Model(data, N, prop, 'a')
+    graphInfection(T, avgInfa)
+    T, avgInfb = SIS_Model(data, N, prop, 'b')
+    graphInfection(T, avgInfb)
+    T, avgInfc = SIS_Model(data, N, prop, 'c')
+    graphInfection(T, avgInfc)
+    plt.show()
 
 if __name__=='__main__':
     main()
