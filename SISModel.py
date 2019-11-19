@@ -1,14 +1,23 @@
-import matplotlib.pyplot as plt
 import csv
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
-def SIS_Model(adj, N, Ri, Bi):
-    lmax = 5.05
-    betaSIS=0.15 #probability that a node will get infected through contact with a single infected neighbor
-    #deltaSIS= (lmax/10)*betaSIS  #probability that a node will recover from infection 
-    deltaSIS=betaSIS
-    T=100
-    P0 = [Ri/(Ri+Bi) for x in range(0, N)]
+def SIS_Model(adj, N, Ri, Bi, plot):
+    lmax = max(np.linalg.eig(adj)[0])
+    betaSIS = 0.15 #probability that a node will get infected through contact with a single infected neighbor
+
+    #deltaSIS = betaSIS
+    if(plot == 'a'):
+        deltaSIS = (lmax/10)*betaSIS  #probability that a node will recover from infection 
+    elif(plot == 'b'):
+        deltaSIS = (lmax*1.01)*betaSIS
+    else:
+        deltaSIS = betaSIS
+
+    T = 100
+    P0 = [0.475 for x in range(0, N)]
 
     Pi=[0 for x in range(0,T)]
     Pi[0]=P0
@@ -24,9 +33,9 @@ def SIS_Model(adj, N, Ri, Bi):
             neighborInfected = 1
             for j in range(0,N):
                 if(adj[i][j]==1):
-                    neighborInfected = neighborInfected*(1-betaSIS*Pi[t-1][j]) #
-            Pit[i] = (Pi[t-1][i]*(1-deltaSIS) + (1-Pi[t-1][i])*(1-neighborInfected))#
-            avgInfectionRate = avgInfectionRate+(1/N)*Pit[i]#
+                    neighborInfected = neighborInfected*(1-betaSIS*Pi[t-1][j])
+            Pit[i] = (Pi[t-1][i]*(1-deltaSIS) + (1-Pi[t-1][i])*(1-neighborInfected))
+            avgInfectionRate = avgInfectionRate+(1/N)*Pit[i]
         Pi[t]=Pit
         avgInfection[t]=avgInfectionRate
 
@@ -42,10 +51,14 @@ def graphInfection(T, avgInf):
     plt.show()
 
 def main():
-    data = list(csv.reader(open('network.csv')))
+    data = pd.read_csv('network.csv', header=None)
     N=200
-    T, avgInf = SIS_Model(data, N, 2, 3)
+    #T, avgInf = SIS_Model(data, N, 2, 3, 'a')
+    #graphInfection(T, avgInf)
+    T, avgInf = SIS_Model(data, N, 2, 3, 'b')
     graphInfection(T, avgInf)
+    #T, avgInf = SIS_Model(data, N, 2, 3, 'c')
+    #graphInfection(T, avgInf)
 
 if __name__=='__main__':
     main()
