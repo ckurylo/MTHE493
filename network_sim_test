@@ -5,7 +5,7 @@ import csv
 
 
 def importG(graphName):
-    return pd.read_csv(graphName, header=None).as_matrix()
+    return pd.read_csv(graphName, header=None).values.tolist()
 
 
 def generateBallProportions(delta, n):
@@ -20,20 +20,22 @@ def generateBallProportions(delta, n):
     return node_balls
 
 
-def outputMetrics(metrics, filename):
-    oString = "time\tIn\tSn\tUn\n"
+def get_balls(ballName):
+    g = pd.read_csv(ballName, header=None).values.tolist()
+    balls = []
+    for i in range(len(g)):
+        RB = g[i][0].split('\t')
+        RB[0] = int(RB[0])
+        RB[1] = int(RB[1])
+        balls.append(RB)
+    return balls
 
-    for i in range(len(metrics)):
-        oString += str(i+1) + '\t' + str(metrics[i][0]) + '\t' + str(metrics[i][1]) + '\t' + str(metrics[i][2]) + '\n'
-    f = open(filename, 'w+')
-    f.write(oString)
 
-
-def polya_sim_test(adjFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile):
+def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile):
 
     sum_metrics = [3*[0] for _ in range(max_n)]
-    node_balls = generateBallProportions(delta, num_nodes)
-
+    #node_balls = generateBallProportions(delta, num_nodes)
+    node_balls = get_balls(ballFile)
     ave_p = 0
     for i in range(num_nodes):
         ave_p += node_balls[i][0] / sum(node_balls[i])
@@ -60,7 +62,8 @@ max_n = 10
 m_mem = max_n + 1
 num_sim = 1
 adjFile = '100_node_adj.csv'
-outputFile = 'output.csv'
+outputFile = '.csv'
+ballFile = 'ball_proportions_100_nodes.csv'
 ########
 
 adj_matrix = importG(adjFile)
@@ -68,4 +71,5 @@ lmax = max(numpy.linalg.eig(adj_matrix)[0])
 print(lmax)
 deltaB = int(lmax)
 deltaR = deltaB*2
-polya_sim_test(adjFile, [deltaB, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile)
+
+polya_sim_test(adjFile, ballFile, [deltaB, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile)
