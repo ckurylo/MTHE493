@@ -8,15 +8,15 @@ def SIS_Model(adj, N, init, plot):
     lmax = max(np.linalg.eig(adj)[0])
     betaSIS = 0.15 #probability that a node will get infected through contact with a single infected neighbor
 
-    #deltaSIS = betaSIS
+    #deltaSIS is probability that a node will recover from infection 
     if(plot == 'a'):
-        deltaSIS = (lmax/10)*betaSIS  #probability that a node will recover from infection 
+        deltaSIS = (lmax/10)*betaSIS  
     elif(plot == 'b'):
         deltaSIS = (lmax*1.01)*betaSIS
     else:
         deltaSIS = betaSIS
 
-    T = 100
+    T = 1000
     P0 = [int(init[x][0])/(int(init[x][0])+int(init[x][1])) for x in range(0, N)]
 
     Pi=[0 for x in range(0,T)]
@@ -60,7 +60,15 @@ def main():
     graphInfection(T, avgInfb)
     T, avgInfc = SIS_Model(data, N, prop, 'c')
     graphInfection(T, avgInfc)
+
     plt.show()
+
+    with open('SISdata.csv', mode='w') as f:
+        writer = csv.writer(f, delimiter=',')
+        writer.writerow(T)
+        writer.writerow(avgInfa)
+        writer.writerow(avgInfb)
+        writer.writerow(avgInfc)
 
 if __name__=='__main__':
     main()
