@@ -63,12 +63,10 @@ def main():
 
     plt.show()
 
-    with open('SISdata.csv', mode='w') as f:
-        writer = csv.writer(f, delimiter=',')
-        writer.writerow(T)
-        writer.writerow(avgInfa)
-        writer.writerow(avgInfb)
-        writer.writerow(avgInfc)
+    with open('SISdata.csv', mode='w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows([T, avgInfa, avgInfb, avgInfc])
+    csvFile.close()
 
 if __name__=='__main__':
     main()
