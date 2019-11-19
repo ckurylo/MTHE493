@@ -6,7 +6,7 @@ from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 from celluloid import Camera
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 
 
 #####
@@ -101,11 +101,13 @@ class SuperUrn(Urn):
         self.Sm.insert(0, nominator/denominator)  # update Sm
 
 
-def createPolyaNetwork(n, m, R, B):  # generates graph and creates urns at every node
-  #  G = nx.barabasi_albert_graph(n, m)  # generate random graph with n nodes, each with average of m connections
-    G = importGraph()
+def createPolyaNetwork(adjFile, M, node_balls):  # generates graph and creates urns at every node
+    G = importGraph(adjFile)
+
     for i in range(len(list(G.nodes))):  # set urn at every node
-        G.nodes[i]['superUrn'] = SuperUrn(i, R, B, MARKOV_MEMORY, G)
+        R = node_balls[i][0]
+        B = node_balls[i][1]
+        G.nodes[i]['superUrn'] = SuperUrn(i, R, B, M, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
     return G
@@ -121,13 +123,12 @@ def networkTimeStep(G, delta):  # increment time and proceed to next step in net
         state_vector.append(G.nodes[i]['superUrn'].Zn)
     return state_vector
 
+
 def diseaseMetrics(G, state_vector):
     N = len(list(G.nodes))
     # average of all red balls pulled  = infection rate
-    state_sum = [sum(row[i] for row in state_vector) for i in range(len(state_vector[0]))]
-    print(state_sum)
-    I_n = (1/N)*state_sum[0]
-    print(I_n)
+    state_sum = sum(row[0] for row in state_vector)
+    I_n = (1/N)*state_sum
 
     r_tot_Sn = 0
     for i in G.nodes:
@@ -143,8 +144,9 @@ def diseaseMetrics(G, state_vector):
     # average of proportion of infection across network
     U_n = (1/N)*rho_tot
 
-    metrics = (I_n, S_n, U_n)
+    metrics = [I_n, S_n, U_n]
     return metrics
+
 
 def printNetwork(G, t,v,m):  # print network attributes
     print('--- Time: ' + str(t) + ' --------------------')
@@ -158,27 +160,33 @@ def printNetwork(G, t,v,m):  # print network attributes
     print('\n', end='')
     print("Network infection rate: {:.2%}".format(m[0]), end='\n')
     print("Avg Network Infection: {:.2%}".format(m[1]), end='\n')
-    print("Network Suseptibility: {:.2%}".format(m[2]), end='\n')
+    print("Network Susceptibility: {:.2%}".format(m[2]), end='\n')
 
 
-def network_simulation(R, B, delta, M, max_n):
-    polya_network = createPolyaNetwork(num_nodes, num_connections, R, B)  # create network of urns
+def network_simulation(adjFile, delta, M, max_n, node_balls):
+    polya_network = createPolyaNetwork(adjFile, M, node_balls)  # create network of urns
 
-    infection_data = {}
+    #infection_data = {}
+    disease_metrics = []
+    print('polya time:')
     for n in range(max_n):  # run simulation for max_n steps
+        print('\r'+str(n), end='')
         v = networkTimeStep(polya_network, delta)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
-        infection_data[n] = {}
-        for node in polya_network.nodes:
-            infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
-        printNetwork(polya_network, n,v,m)  # print network attributes
-    update_graph(polya_network, infection_data)
+        disease_metrics.append(m)
+        #infection_data[n] = {}
+        #for node in polya_network.nodes:
+            #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
+        # printNetwork(polya_network, n,v,m)  # print network attributes
+    #update_graph(polya_network, infection_data)
+
+    return disease_metrics
 
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
 
 
-def update_graph(G,data):
+def update_graph(G, data):
     fig = plt.figure()
     camera = Camera(fig)
     layout = nx.spring_layout(G)
@@ -217,19 +225,27 @@ def update_graph(G,data):
 #         polyaUrn.timeStep(delta)
 #         polyaUrn.print_current_n()
 
-def importGraph():
-    bigG = nx.from_numpy_matrix(pd.read_csv("testGraph.csv", header=None).as_matrix())
+def importGraph(adjFile):
+    bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
     return bigG
 #######################################
 # PARAMETER INPUT
-R = 40
-B = 60
-deltaB = 5
-deltaR = 50
-delta = [deltaB, deltaR]
-M = MARKOV_MEMORY
-max_n = 200
-num_nodes = 7
-num_connections = 3
-network_simulation(R, B, delta, M, max_n)
 
+def main():
+    R = 40
+    B = 60
+    deltaB = 5
+    deltaR = 50
+    delta = [deltaB, deltaR]
+    M = MARKOV_MEMORY
+    max_n = 200
+    num_nodes = 7
+    num_connections = 3
+    adjFile = '100_node_adj.csv'
+    network_simulation(adjFile, delta, M, max_n, [])
+
+
+
+
+if __name__=='__main__':
+    main()
