@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def SIS_Model(adj, N, Ri, Bi, plot):
+def SIS_Model(adj, N, init, plot):
     lmax = max(np.linalg.eig(adj)[0])
     betaSIS = 0.15 #probability that a node will get infected through contact with a single infected neighbor
 
@@ -17,12 +17,12 @@ def SIS_Model(adj, N, Ri, Bi, plot):
         deltaSIS = betaSIS
 
     T = 100
-    P0 = [0.475 for x in range(0, N)]
+    P0 = [int(init[x][0])/(int(init[x][0])+int(init[x][1])) for x in range(0, N)]
 
     Pi=[0 for x in range(0,T)]
     Pi[0]=P0
     avgInfection = [0 for x in range(0,T)]
-    avgInfection[0] = Ri/(Ri+Bi)
+    avgInfection[0] = sum(P0)/N
 
     for t in range(1, T):
         Pit = [0 for x in range(0,N)]
@@ -51,14 +51,15 @@ def graphInfection(T, avgInf):
     plt.show()
 
 def main():
-    data = pd.read_csv('network.csv', header=None)
-    N=200
-    #T, avgInf = SIS_Model(data, N, 2, 3, 'a')
-    #graphInfection(T, avgInf)
-    T, avgInf = SIS_Model(data, N, 2, 3, 'b')
+    data = pd.read_csv('100_node_adj.csv', header=None)
+    prop = list(csv.reader(open('ball_proportions.csv')))
+    N=100
+    T, avgInf = SIS_Model(data, N, prop, 'a')
     graphInfection(T, avgInf)
-    #T, avgInf = SIS_Model(data, N, 2, 3, 'c')
-    #graphInfection(T, avgInf)
+    T, avgInf = SIS_Model(data, N, prop, 'b')
+    graphInfection(T, avgInf)
+    T, avgInf = SIS_Model(data, N, prop, 'c')
+    graphInfection(T, avgInf)
 
 if __name__=='__main__':
     main()
