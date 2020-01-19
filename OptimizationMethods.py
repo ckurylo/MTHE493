@@ -19,3 +19,5 @@ def heuristic(n, b, N, C, S):
         deltaB[i] = b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio
     return deltaB
 
+
+def gradient():

@@ -114,9 +114,16 @@ def createPolyaNetwork(adjFile, M, node_balls):  # generates graph and creates u
     return G
 
 
-def networkTimeStep(G, delta):  # increment time and proceed to next step in network draw process
+def getDelta(G):
+    deltaB = 1
+    deltaR = 2
+    return [deltaB, deltaR]
+
+
+def networkTimeStep(G):  # increment time and proceed to next step in network draw process
     state_vector = []
     for i in G.nodes:
+        delta = getDelta(G)
         G.nodes[i]['superUrn'].drawBall()
         G.nodes[i]['superUrn'].nextDelta(delta)
         G.nodes[i]['superUrn'].nextU()
