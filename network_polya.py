@@ -6,6 +6,7 @@ from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 from celluloid import Camera
 import matplotlib
+import OptimizationMethods as opt
 #matplotlib.use('Agg')
 
 
@@ -228,7 +229,13 @@ def update_graph(G, data):
 def centralityCalculation(adjFile):
     G = importGraph(adjFile)
     deg_centrality = nx.degree_centrality(G)
-    closeness
+    deg_cent = [k for k in deg_centrality.values()]
+    print(deg_cent)
+    close_centrality = nx.closeness_centrality(G)
+    #print(deg_centrality)
+    bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
+    #print(deg_centrality)
+    return deg_cent
 
 def importGraph(adjFile):
     bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
@@ -237,6 +244,7 @@ def importGraph(adjFile):
 # PARAMETER INPUT
 
 def main():
+    '''
     R = 40
     B = 60
     deltaB = 5
@@ -248,7 +256,8 @@ def main():
     num_connections = 3
     adjFile = '100_node_adj.csv'
     network_simulation(adjFile, delta, M, max_n, [])
-
+    '''
+    centralityCalculation('100_node_adj.csv')
 
 
 
