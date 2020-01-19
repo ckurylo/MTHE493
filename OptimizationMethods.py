@@ -12,3 +12,5 @@ def heuristic(n, B, N, C, S):
 
     return deltaB
 
+
+def gradient():
