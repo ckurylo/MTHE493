@@ -225,6 +225,11 @@ def update_graph(G, data):
 #         polyaUrn.timeStep(delta)
 #         polyaUrn.print_current_n()
 
+def centralityCalculation(adjFile):
+    G = importGraph(adjFile)
+    deg_centrality = nx.degree_centrality(G)
+    closeness
+
 def importGraph(adjFile):
     bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
     return bigG
