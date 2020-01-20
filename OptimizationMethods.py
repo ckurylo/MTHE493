@@ -22,6 +22,16 @@ def heuristic(n, b, N, C, S):
     return deltaB
 
 
+def Sn_function(G):
+    c = [0 for i in range(G.number_of_nodes())]
+    d = [0 for i in range(G.number_of_nodes())]
+    for i in G.nodes:
+        node = G.nodes[i]['superUrn']
+        c[i] = node.super_R + sum([np.dot(j.delta, j.Zn) for j in node.Ni_list])
+        #d[i] = c[i] + node.super_B +
+
+
+
 def gradient():
     #gradient descent algorithm
     return
