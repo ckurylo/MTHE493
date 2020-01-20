@@ -1,13 +1,15 @@
 import numpy as np
+import math
+
 
 def evenDistribution(n, b):
-    deltaB = [b/n for i in range(n)]
+    deltaB = [math.floor(b/n) for i in range(n)]
     return deltaB
 
 def randomDistribution(n, b):
     values = [0.0, b] + list(np.random.uniform(low=0.0,high=b,size=n-1))
     values.sort()
-    deltaB = [values[i+1] - values[i] for i in range(n)]
+    deltaB = [math.floor(values[i+1] - values[i]) for i in range(n)]
     return deltaB
 
 def heuristic(n, b, N, C, S):
@@ -16,7 +18,7 @@ def heuristic(n, b, N, C, S):
     for i in range(n):
         totalInfectionCentralityRatio += N[i]*C[i]*S[i]
     for i in range(n):
-        deltaB[i] = b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio
+        deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
     return deltaB
 
 
