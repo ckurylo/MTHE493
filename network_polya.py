@@ -124,21 +124,21 @@ def getDelta(G, deployment_method):
         deltaB = opt.randomDistribution(G.number_of_nodes(), BUDGET)
     elif deployment_method == 3:
         S = []
+        N = numNeighbors(G)
+        C = centralityCalculation(G)
         for i in G.nodes:
             S.append(G.nodes[i]['superUrn'].Sm[0])
         deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S)
-
-
     deltaR = G.number_of_nodes()*[DELTA_R]
     return [deltaB, deltaR]
 
 
 def networkTimeStep(G):  # increment time and proceed to next step in network draw process
     state_vector = []
-    delta = getDelta(G)
+    delta = getDelta(G, 3)
     for i in G.nodes:
         G.nodes[i]['superUrn'].drawBall()
-        G.nodes[i]['superUrn'].nextDelta(delta[i])
+        G.nodes[i]['superUrn'].nextDelta([delta[0][i], delta[1][i]])
         G.nodes[i]['superUrn'].nextU()
         G.nodes[i]['superUrn'].nextSm()
         state_vector.append(G.nodes[i]['superUrn'].Zn)
@@ -192,7 +192,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls):
     print('polya time:')
     for n in range(max_n):  # run simulation for max_n steps
         print('\r'+str(n), end='')
-        v = networkTimeStep(polya_network, delta)  # proceed to next step in draw process
+        v = networkTimeStep(polya_network)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
         disease_metrics.append(m)
         #infection_data[n] = {}
@@ -265,6 +265,18 @@ def importGraph(adjFile):
 #######################################
 # PARAMETER INPUT
 
+
+def get_balls(ballName):
+    g = pd.read_csv(ballName, header=None).values.tolist()
+    balls = []
+    for i in range(len(g)):
+        BR = g[i][0].split('\t')
+        BR[0] = int(BR[0])
+        BR[1] = int(BR[1])
+        balls.append(BR)
+    return balls
+
+
 def main():
 
     R = 40
@@ -277,7 +289,7 @@ def main():
     num_nodes = 7
     num_connections = 3
     adjFile = '100_node_adj.csv'
-    network_simulation(adjFile, delta, M, max_n, [])
+    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_100_nodes.csv'))
 
     """
     G, cent = centralityCalculation('100_node_adj.csv')
