@@ -16,7 +16,7 @@ def generateBallProportions(delta, n):
     for i in range(n):
         R = numpy.random.choice(range(R_bd[0], R_bd[1]))
         B = numpy.random.choice(range(B_bd[0], B_bd[1]))
-        node_balls.append([R, B])
+        node_balls.append([B, R])
     return node_balls
 
 
@@ -24,10 +24,10 @@ def get_balls(ballName):
     g = pd.read_csv(ballName, header=None).values.tolist()
     balls = []
     for i in range(len(g)):
-        RB = g[i][0].split('\t')
-        RB[0] = int(RB[0])
-        RB[1] = int(RB[1])
-        balls.append(RB)
+        BR = g[i][0].split('\t')
+        BR[0] = int(BR[0])
+        BR[1] = int(BR[1])
+        balls.append(BR)
     return balls
 
 
