@@ -21,3 +21,7 @@ def heuristic(n, b, N, C, S):
 
 
 def gradient():
+    #gradient descent algorithm
+    return
+
+

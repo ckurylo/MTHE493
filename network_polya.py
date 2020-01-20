@@ -237,12 +237,15 @@ def centralityCalculation(adjFile):
     G = importGraph(adjFile)
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
-    print(deg_cent)
     close_centrality = nx.closeness_centrality(G)
     #print(deg_centrality)
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     #print(deg_centrality)
-    return deg_cent
+    return G, deg_cent
+
+def numNeighbors(G):
+    neighbors = [len(list(G.neighbors(n))) for n in G]
+    return neighbors
 
 def importGraph(adjFile):
     bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
@@ -264,9 +267,13 @@ def main():
     adjFile = '100_node_adj.csv'
     network_simulation(adjFile, delta, M, max_n, [])
     '''
-    centralityCalculation('100_node_adj.csv')
-
-
+    G, cent = centralityCalculation('100_node_adj.csv')
+    neigh = numNeighbors(G)
+    deltaB1 = opt.evenDistribution(100, 800)
+    print(deltaB1)
+    deltaB2 = opt.randomDistribution(100, 800)
+    print(deltaB2)
+    #opt.heuristic(100, 800, N, cent, S)
 
 if __name__=='__main__':
     main()
