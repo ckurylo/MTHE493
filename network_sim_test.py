@@ -58,12 +58,16 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-max_n = 100
-m_mem = 20
-num_sim = 1
+max_n = 50
+m_mem = 8
+num_sim = 10
 adjFile = '100_node_adj.csv'
 outputFile = 'test_heuristic.csv'
 ballFile = 'ball_proportions_100_nodes.csv'
+
+adjFile = '10node.csv'
+outputFile = '10node_case2.csv'
+ballFile = '10node_proportions.csv'
 ########
 budget = 25
 deltaR = 2
@@ -73,6 +77,6 @@ adj_matrix = importG(adjFile)
 # deltaB = int(lmax)
 # deltaR = deltaB*2
 
-opt_method = 3
+opt_method = 2
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method)

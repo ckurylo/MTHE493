@@ -260,9 +260,9 @@ def centralityCalculation(G):
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     bet_cent = [k for k in bet_centrality.values()]
     #print(deg_centrality)
-    return deg_cent
+    #return deg_cent
     #return close_cent
-    #return bet_cent
+    return bet_cent
 
 def numNeighbors(G):
     neighbors = [len(list(G.neighbors(n))) for n in G]
