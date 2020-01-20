@@ -13,20 +13,24 @@ import OptimizationMethods as opt
 
 #####
 # CONSTANTS
-MARKOV_MEMORY = 10
-BUDGET = 1000
-DELTA_R = 10
+def defConstants(m, b, d):
+    global MARKOV_MEMORY
+    MARKOV_MEMORY = m
+    global BUDGET
+    BUDGET = b
+    global DELTA_R
+    DELTA_R = d
 
 # Single Urn class, parent of SuperUrn class
 class Urn:
-    def __init__(self, key, R, B, M):
+    def __init__(self, key, R, B):
         self.key = key
         self.R = R  # initial number of Red balls
         self.B = B  # initial number of Black balls
         self.T = R + B  # initial Total number of balls
-        self.delta = M*[0]  # ball replacement number
-        self.M = M  # memory of the system
-        self.Zn = M*[0]   # stoch process indicator for black or red draw at time n, only need M previous draw info
+        self.delta = MARKOV_MEMORY*[0]  # ball replacement number
+#        self.M = MARKOV_MEMORY  # memory of the system
+        self.Zn = MARKOV_MEMORY*[0]   # stoch process indicator for black or red draw at time n, only need M previous draw info
         self.Um = [R/(R+B), 0]  # red ball proportion in the urn, only ever need the value before and after each draw
         self.n = 0  # time
 
@@ -69,8 +73,8 @@ class Urn:
 
 # SuperUrn class, child class of Urn
 class SuperUrn(Urn):
-    def __init__(self, key, R, B, M, G):
-        super().__init__(key, R, B, M)  # initialize parent urn class
+    def __init__(self, key, R, B, G):
+        super().__init__(key, R, B)  # initialize parent urn class
         self.Graph = G  # graph the superUrn is part of
         self.Ni_key = [key] + list(nx.all_neighbors(G, key))  # list of node neighbours' keys
         # these next variables may not be set until whole network is defined
@@ -105,13 +109,13 @@ class SuperUrn(Urn):
         self.Sm.insert(0, nominator/denominator)  # update Sm
 
 
-def createPolyaNetwork(adjFile, M, node_balls):  # generates graph and creates urns at every node
+def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns at every node
     G = importGraph(adjFile)
 
     for i in range(len(list(G.nodes))):  # set urn at every node
         B = node_balls[i][0]
         R = node_balls[i][1]
-        G.nodes[i]['superUrn'] = SuperUrn(i, R, B, M, G)
+        G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
     return G
@@ -133,9 +137,9 @@ def getDelta(G, deployment_method):
     return [deltaB, deltaR]
 
 
-def networkTimeStep(G):  # increment time and proceed to next step in network draw process
+def networkTimeStep(G, opt_method):  # increment time and proceed to next step in network draw process
     state_vector = []
-    delta = getDelta(G, 3)
+    delta = getDelta(G, opt_method)
     for i in G.nodes:
         G.nodes[i]['superUrn'].drawBall()
         G.nodes[i]['superUrn'].nextDelta([delta[0][i], delta[1][i]])
@@ -184,15 +188,16 @@ def printNetwork(G, t,v,m):  # print network attributes
     print("Network Susceptibility: {:.2%}".format(m[2]), end='\n')
 
 
-def network_simulation(adjFile, delta, M, max_n, node_balls):
-    polya_network = createPolyaNetwork(adjFile, M, node_balls)  # create network of urns
+def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method):
+    defConstants(M, delta[0], delta[1])
 
+    polya_network = createPolyaNetwork(adjFile, node_balls)  # create network of urns
     #infection_data = {}
     disease_metrics = []
     print('polya time:')
     for n in range(max_n):  # run simulation for max_n steps
         print('\r'+str(n), end='')
-        v = networkTimeStep(polya_network)  # proceed to next step in draw process
+        v = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
         disease_metrics.append(m)
         #infection_data[n] = {}
@@ -250,10 +255,14 @@ def centralityCalculation(G):
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
     close_centrality = nx.closeness_centrality(G)
+    close_cent = [k for k in close_centrality.values()]
     #print(deg_centrality)
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
+    bet_cent = [k for k in bet_centrality.values()]
     #print(deg_centrality)
     return deg_cent
+    #return close_cent
+    #return bet_cent
 
 def numNeighbors(G):
     neighbors = [len(list(G.neighbors(n))) for n in G]
@@ -281,16 +290,17 @@ def main():
 
     R = 40
     B = 60
-    deltaB = 5
+    M = 10
+    budget = 1000
     deltaR = 50
-    delta = [deltaB, deltaR]
-    M = MARKOV_MEMORY
+    delta = [budget, deltaR]
     max_n = 200
     num_nodes = 7
     num_connections = 3
     adjFile = '100_node_adj.csv'
-    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_100_nodes.csv'))
-
+    defConstants(M, delta[0], delta[1])
+    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_100_nodes.csv'), opt_method=3)
+    # opt_method: 1 for uniform vaccine deployment, 2 for random, 3 for heuristic, 4 for gradient descent
     """
     G, cent = centralityCalculation('100_node_adj.csv')
     neigh = numNeighbors(G)

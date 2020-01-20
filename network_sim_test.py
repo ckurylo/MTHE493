@@ -31,7 +31,7 @@ def get_balls(ballName):
     return balls
 
 
-def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile):
+def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile, opt_method):
 
     sum_metrics = [3*[0] for _ in range(max_n)]
     #node_balls = generateBallProportions(delta, num_nodes)
@@ -45,7 +45,7 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
     for i in range(num_sim):
         print('simulation:')
         print('\r'+str(i), end='')
-        metrics = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls)
+        metrics = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method)
         for j in range(max_n):
             for k in range(3):
                 sum_metrics[j][k] = sum_metrics[j][k] + metrics[j][k]
@@ -58,18 +58,21 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-max_n = 10
-m_mem = max_n + 1
+max_n = 100
+m_mem = 20
 num_sim = 1
 adjFile = '100_node_adj.csv'
-outputFile = '.csv'
+outputFile = 'test_heuristic.csv'
 ballFile = 'ball_proportions_100_nodes.csv'
 ########
-
+budget = 25
+deltaR = 2
 adj_matrix = importG(adjFile)
-lmax = max(numpy.linalg.eig(adj_matrix)[0])
-print(lmax)
-deltaB = int(lmax)
-deltaR = deltaB*2
+# lmax = max(numpy.linalg.eig(adj_matrix)[0])
+# print(lmax)
+# deltaB = int(lmax)
+# deltaR = deltaB*2
 
-polya_sim_test(adjFile, ballFile, [deltaB, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile)
+opt_method = 3
+
+polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method)
