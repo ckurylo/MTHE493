@@ -246,15 +246,14 @@ def update_graph(G, data):
 #         polyaUrn.timeStep(delta)
 #         polyaUrn.print_current_n()
 
-def centralityCalculation(adjFile):
-    G = importGraph(adjFile)
+def centralityCalculation(G):
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
     close_centrality = nx.closeness_centrality(G)
     #print(deg_centrality)
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     #print(deg_centrality)
-    return G, deg_cent
+    return deg_cent
 
 def numNeighbors(G):
     neighbors = [len(list(G.neighbors(n))) for n in G]
@@ -267,7 +266,7 @@ def importGraph(adjFile):
 # PARAMETER INPUT
 
 def main():
-    '''
+
     R = 40
     B = 60
     deltaB = 5
@@ -279,7 +278,8 @@ def main():
     num_connections = 3
     adjFile = '100_node_adj.csv'
     network_simulation(adjFile, delta, M, max_n, [])
-    '''
+
+    """
     G, cent = centralityCalculation('100_node_adj.csv')
     neigh = numNeighbors(G)
     deltaB1 = opt.evenDistribution(100, 800)
@@ -287,6 +287,7 @@ def main():
     deltaB2 = opt.randomDistribution(100, 800)
     print(deltaB2)
     #opt.heuristic(100, 800, N, cent, S)
+    """
 
 if __name__=='__main__':
     main()
