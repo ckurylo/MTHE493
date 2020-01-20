@@ -2,6 +2,7 @@ import numpy
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 from celluloid import Camera
@@ -13,6 +14,8 @@ import OptimizationMethods as opt
 #####
 # CONSTANTS
 MARKOV_MEMORY = 10
+BUDGET = 1000
+DELTA_R = 10
 
 # Single Urn class, parent of SuperUrn class
 class Urn:
@@ -106,26 +109,36 @@ def createPolyaNetwork(adjFile, M, node_balls):  # generates graph and creates u
     G = importGraph(adjFile)
 
     for i in range(len(list(G.nodes))):  # set urn at every node
-        R = node_balls[i][0]
-        B = node_balls[i][1]
+        B = node_balls[i][0]
+        R = node_balls[i][1]
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, M, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
     return G
 
 
-def getDelta(G):
-    deltaB = 1
-    deltaR = 2
+def getDelta(G, deployment_method):
+    if deployment_method == 1:
+        deltaB = opt.evenDistribution(G.number_of_nodes(), BUDGET)
+    elif deployment_method == 2:
+        deltaB = opt.randomDistribution(G.number_of_nodes(), BUDGET)
+    elif deployment_method == 3:
+        S = []
+        for i in G.nodes:
+            S.append(G.nodes[i]['superUrn'].Sm[0])
+        deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S)
+
+
+    deltaR = G.number_of_nodes()*[DELTA_R]
     return [deltaB, deltaR]
 
 
 def networkTimeStep(G):  # increment time and proceed to next step in network draw process
     state_vector = []
+    delta = getDelta(G)
     for i in G.nodes:
-        delta = getDelta(G)
         G.nodes[i]['superUrn'].drawBall()
-        G.nodes[i]['superUrn'].nextDelta(delta)
+        G.nodes[i]['superUrn'].nextDelta(delta[i])
         G.nodes[i]['superUrn'].nextU()
         G.nodes[i]['superUrn'].nextSm()
         state_vector.append(G.nodes[i]['superUrn'].Zn)
