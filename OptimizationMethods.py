@@ -28,7 +28,7 @@ def Sn_function(G):
     for i in G.nodes:
         node = G.nodes[i]['superUrn']
         c[i] = node.super_R + sum([np.dot(j.delta, j.Zn) for j in node.Ni_list])
-        #d[i] = c[i] + node.super_B +
+        #d[i] = node.super_B + node.super_R +
 
 
 
