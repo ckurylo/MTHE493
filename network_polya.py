@@ -133,6 +133,8 @@ def getDelta(G, deployment_method):
         for i in G.nodes:
             S.append(G.nodes[i]['superUrn'].Sm[0])
         deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S)
+    elif deployment_method == 4:
+        deltaB = opt.gradient(G, 5, BUDGET)
     deltaR = G.number_of_nodes()*[DELTA_R]
     return [deltaB, deltaR]
 
@@ -289,18 +291,14 @@ def get_balls(ballName):
 
 def main():
 
-    R = 40
-    B = 60
-    M = 10
-    budget = 1000
+    M = 5
+    budget = 100
     deltaR = 50
     delta = [budget, deltaR]
-    max_n = 200
-    num_nodes = 7
-    num_connections = 3
-    adjFile = '100_node_adj.csv'
+    max_n = 50
+    adjFile = '10node.csv'
     defConstants(M, delta[0], delta[1])
-    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_100_nodes.csv'), opt_method=3)
+    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method=4)
     # opt_method: 1 for uniform vaccine deployment, 2 for random, 3 for heuristic, 4 for gradient descent
     """
     G, cent = centralityCalculation('100_node_adj.csv')
