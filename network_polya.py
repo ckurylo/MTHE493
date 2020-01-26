@@ -264,6 +264,7 @@ def centralityCalculation(G):
     #return close_cent
     return bet_cent
 
+
 def numNeighbors(G):
     neighbors = [len(list(G.neighbors(n))) for n in G]
     return neighbors
