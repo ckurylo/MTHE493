@@ -140,7 +140,7 @@ def getDelta(G, deployment_method):
             S.append(G.nodes[i]['superUrn'].Sm[0])
         deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S)
     elif deployment_method[0] == 4:
-        deltaB = opt.gradient(G, deployment_method[1], BUDGET, DELTA_R)
+        deltaB = opt.gradient(G, deployment_method[1], deployment_method[2], BUDGET, DELTA_R)
     deltaR = G.number_of_nodes()*[DELTA_R]
     return [deltaB, deltaR]
 
@@ -151,8 +151,9 @@ def networkTimeStep(G, opt_method):  # increment time and proceed to next step i
         delta = getDelta(G, opt_method)
     for i in G.nodes:
         G.nodes[i]['superUrn'].drawBall()
-        if opt_method[0] == 4 and opt_method[2] == 1:  # get vaccine deployment if post-draw optimization
-            delta = getDelta(G, opt_method)
+    if opt_method[0] == 4 and opt_method[2] == 1:  # get vaccine deployment if post-draw optimization
+        delta = getDelta(G, opt_method)
+    for i in G.nodes:
         G.nodes[i]['superUrn'].nextDelta([delta[0][i], delta[1][i]])
         G.nodes[i]['superUrn'].nextU()
         G.nodes[i]['superUrn'].nextSm()
@@ -312,7 +313,7 @@ def main():
     adjFile = '10node.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [4, 5, 0]
+    opt_method = [4, 5, 1]
     #opt_method = [2]
     network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor)
     # opt_method: [1] for uniform vaccine deployment, [2] for random
