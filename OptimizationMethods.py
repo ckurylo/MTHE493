@@ -44,9 +44,10 @@ def gradient(G, T, B):
     y_bar = y[:][:]
     [xN, f_n] = Sn_function(G)
     f_partials = sym.derive_by_array(f_n, xN)
+    if f_partials == N * [0]: return evenDistribution(N, B)  # if all partials are 0, do uniform dist of vaccines
     for k in range(T):
         #
-        f_part_def = [f_partials[i].subs([(xN[j], y[0][j]) for j in range(N)]) for i in range(N)]
+        f_part_def = [f_partials[i].subs([(xN[j], 1) for j in range(N)]) for i in range(N)]
         index = np.argmin(f_part_def)
         #
         y_bar[k] = [0 for i in range(N)]
@@ -59,5 +60,5 @@ def gradient(G, T, B):
         #
         y[k+1] = [y[k][i] + alpha * (y_bar[k][i] - y[k][i]) for i in range(N)]
 
-    return y
+    return y[-1]
 

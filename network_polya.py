@@ -13,13 +13,15 @@ import OptimizationMethods as opt
 
 #####
 # CONSTANTS
-def defConstants(m, b, d):
+def defConstants(m, b, d, tenacity):
     global MARKOV_MEMORY
     MARKOV_MEMORY = m
     global BUDGET
     BUDGET = b
     global DELTA_R
     DELTA_R = d
+    global TENACITY
+    TENACITY = tenacity
 
 # Single Urn class, parent of SuperUrn class
 class Urn:
@@ -76,19 +78,23 @@ class SuperUrn(Urn):
     def __init__(self, key, R, B, G):
         super().__init__(key, R, B)  # initialize parent urn class
         self.Graph = G  # graph the superUrn is part of
-        self.Ni_key = [key] + list(nx.all_neighbors(G, key))  # list of node neighbours' keys
+        self.Ni_key = list(nx.all_neighbors(G, key))  # list of node neighbours' keys
         # these next variables may not be set until whole network is defined
         self.Ni_list = []
+        self.Ni_weight = [TENACITY] + [G.adj[key][i]['weight'] for i in self.Ni_key]
+        self.Ni_key.insert(0, key)
         self.super_R = 0
         self.super_B = 0
         self.super_T = 0
         self.Sm = []
 
     def setInitialVariables(self):  # these variables are initialized after the whole network is initialized
+        k = 0
         for i in self.Ni_key:  # parse through node neighbour keys
             self.Ni_list.append(self.Graph.nodes[i]['superUrn'])  # set list of neighbour pointers
-            self.super_R += self.Graph.nodes[i]['superUrn'].R  # find initial # of red balls in super urn
-            self.super_B += self.Graph.nodes[i]['superUrn'].B  # find initial # of black balls in super urn
+            self.super_R += self.Ni_weight[k] * self.Graph.nodes[i]['superUrn'].R  # find initial # of red balls in super urn
+            self.super_B += self.Ni_weight[k] * self.Graph.nodes[i]['superUrn'].B  # find initial # of black balls in super urn
+            k += 1
         self.super_T = self.super_R + self.super_B  # set initial # of total balls in super urn
         self.Sm = [self.super_R/self.super_T, 0]  # set initial super urn proportion
 
@@ -100,11 +106,11 @@ class SuperUrn(Urn):
     def nextSm(self):  # calculate next draw proportion
         nominator = 0
         denominator = 0
-        for urn in self.Ni_list:
-            # multiply single urn red ball proportion by single urn total # of balls, for every neighbour
-            nominator += urn.Um[0] * (urn.T + sum(urn.delta))
+        for i in range(len(self.Ni_list)):
+            # multiply single urn red ball proportion by single urn total # of balls, for every neighbour, with weight
+            nominator += self.Ni_weight[i] * self.Ni_list[i].Um[0] * (self.Ni_list[i].T + sum(self.Ni_list[i].delta))
             # total # of balls for every neighbour
-            denominator += urn.T + sum(urn.delta)
+            denominator += self.Ni_weight[i] * ( self.Ni_list[i].T + sum(self.Ni_list[i].delta) )
         self.Sm.pop()
         self.Sm.insert(0, nominator/denominator)  # update Sm
 
@@ -122,19 +128,19 @@ def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns
 
 
 def getDelta(G, deployment_method):
-    if deployment_method == 1:
+    if deployment_method[0] == 1:
         deltaB = opt.evenDistribution(G.number_of_nodes(), BUDGET)
-    elif deployment_method == 2:
+    elif deployment_method[0] == 2:
         deltaB = opt.randomDistribution(G.number_of_nodes(), BUDGET)
-    elif deployment_method == 3:
+    elif deployment_method[0] == 3:
         S = []
         N = numNeighbors(G)
-        C = centralityCalculation(G)
+        C = centralityCalculation(G, deployment_method[1])
         for i in G.nodes:
             S.append(G.nodes[i]['superUrn'].Sm[0])
         deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S)
-    elif deployment_method == 4:
-        deltaB = opt.gradient(G, 5, BUDGET)
+    elif deployment_method[0] == 4:
+        deltaB = opt.gradient(G, deployment_method[1], BUDGET)
     deltaR = G.number_of_nodes()*[DELTA_R]
     return [deltaB, deltaR]
 
@@ -190,8 +196,8 @@ def printNetwork(G, t,v,m):  # print network attributes
     print("Network Susceptibility: {:.2%}".format(m[2]), end='\n')
 
 
-def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method):
-    defConstants(M, delta[0], delta[1])
+def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacity):
+    defConstants(M, delta[0], delta[1], tenacity)
 
     polya_network = createPolyaNetwork(adjFile, node_balls)  # create network of urns
     #infection_data = {}
@@ -253,7 +259,7 @@ def update_graph(G, data):
 #         polyaUrn.timeStep(delta)
 #         polyaUrn.print_current_n()
 
-def centralityCalculation(G):
+def centralityCalculation(G, cent_mes):
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
     close_centrality = nx.closeness_centrality(G)
@@ -262,9 +268,12 @@ def centralityCalculation(G):
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     bet_cent = [k for k in bet_centrality.values()]
     #print(deg_centrality)
-    #return deg_cent
-    #return close_cent
-    return bet_cent
+    if cent_mes == 1:
+        return deg_cent
+    elif cent_mes == 2:
+        return close_cent
+    else:
+        return bet_cent
 
 
 def numNeighbors(G):
@@ -296,10 +305,15 @@ def main():
     deltaR = 50
     delta = [budget, deltaR]
     max_n = 50
+    tenacity_factor = 1  # weight of node's own Urn in Super Urn
     adjFile = '10node.csv'
-    defConstants(M, delta[0], delta[1])
-    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method=4)
-    # opt_method: 1 for uniform vaccine deployment, 2 for random, 3 for heuristic, 4 for gradient descent
+    defConstants(M, delta[0], delta[1], tenacity_factor)
+
+    opt_method = [4, 5]
+    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor)
+    # opt_method: 1 for uniform vaccine deployment, 2 for random
+    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
+    # [4, T] for gradient descent, T the number of iterations of the algo for each time step
     """
     G, cent = centralityCalculation('100_node_adj.csv')
     neigh = numNeighbors(G)

@@ -31,7 +31,7 @@ def get_balls(ballName):
     return balls
 
 
-def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile, opt_method):
+def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile, opt_method, tenacity):
 
     sum_metrics = [3*[0] for _ in range(max_n)]
     #node_balls = generateBallProportions(delta, num_nodes)
@@ -45,7 +45,7 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
     for i in range(num_sim):
         print('simulation:')
         print('\r'+str(i), end='')
-        metrics = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method)
+        metrics = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method, tenacity)
         for j in range(max_n):
             for k in range(3):
                 sum_metrics[j][k] = sum_metrics[j][k] + metrics[j][k]
@@ -58,25 +58,31 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-max_n = 50
+max_n = 100
 m_mem = 8
-num_sim = 10
-adjFile = '100_node_adj.csv'
-outputFile = 'test_heuristic.csv'
+num_sim = 1
+adjFile = '100_node_adj_2.csv'
+outputFile = 'weight_demo_metrics.csv'
 ballFile = 'ball_proportions_100_nodes.csv'
 
-adjFile = '10node.csv'
-outputFile = '10node_case2.csv'
-ballFile = '10node_proportions.csv'
+# adjFile = '10node.csv'
+# outputFile = '10node_case2.csv'
+# ballFile = '10node_proportions.csv'
 ########
-budget = 25
+budget = 500
 deltaR = 2
+tenacity = 100000  # weight of node's own Urn in Super Urn
 adj_matrix = importG(adjFile)
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
 # print(lmax)
 # deltaB = int(lmax)
 # deltaR = deltaB*2
 
-opt_method = 2
+opt_method = [4, 5]
+# opt_method: 1 for uniform vaccine deployment, 2 for random
+# [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
+# [4, T] for gradient descent, T the number of iterations of the algo for each time step
 
-polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method)
+
+polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method,
+               tenacity)
