@@ -208,7 +208,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
     #infection_data = {}
     disease_metrics = []
     N = len(list(polya_network.nodes))
-    PiSIS, avgInfSIS = sis.initialize(max_n, N ,node_balls)
+    PiSIS, avgInfSIS = sis.SISInitilize(max_n, N ,node_balls)
     print('polya time:')
     for n in range(max_n):  # run simulation for max_n steps
         print('\r'+str(n), end='')
