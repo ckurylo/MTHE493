@@ -8,6 +8,7 @@ from matplotlib.animation import FuncAnimation
 from celluloid import Camera
 import matplotlib
 import OptimizationMethods as opt
+import SISmodelv2 as sis
 #matplotlib.use('Agg')
 
 
@@ -154,7 +155,7 @@ def networkTimeStep(G, opt_method):  # increment time and proceed to next step i
         G.nodes[i]['superUrn'].nextU()
         G.nodes[i]['superUrn'].nextSm()
         state_vector.append(G.nodes[i]['superUrn'].Zn)
-    return state_vector
+    return state_vector, delta
 
 
 def diseaseMetrics(G, state_vector):
@@ -195,6 +196,10 @@ def printNetwork(G, t,v,m):  # print network attributes
     print("Avg Network Infection: {:.2%}".format(m[1]), end='\n')
     print("Network Susceptibility: {:.2%}".format(m[2]), end='\n')
 
+def sisParallel(adjFile, N, delta, Pi, avgInf, n):
+    [deltaB, deltaR] = delta
+    PiSIS, avgInfSIS = sis.SISModelStep(adjFile, N, deltaB, deltaR, Pi, avgInf, n)
+    return PiSIS, avgInfSIS
 
 def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacity):
     defConstants(M, delta[0], delta[1], tenacity)
@@ -202,12 +207,15 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
     polya_network = createPolyaNetwork(adjFile, node_balls)  # create network of urns
     #infection_data = {}
     disease_metrics = []
+    N = len(list(polya_network.nodes))
+    PiSIS, avgInfSIS = sis.initialize(max_n, N ,node_balls)
     print('polya time:')
     for n in range(max_n):  # run simulation for max_n steps
         print('\r'+str(n), end='')
-        v = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
+        v, delta = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
         disease_metrics.append(m)
+        PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
         #infection_data[n] = {}
         #for node in polya_network.nodes:
             #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
