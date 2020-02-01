@@ -305,17 +305,17 @@ def get_balls(ballName):
 def main():
 
     M = 5
-    budget = 100
-    deltaR = 50
+    budget = 25
+    deltaR = 2
     delta = [budget, deltaR]
     max_n = 50
     tenacity_factor = 1  # weight of node's own Urn in Super Urn
     adjFile = '10node.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [4, 5, 1]
+    opt_method = [4, 3, 1]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor)
+    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step

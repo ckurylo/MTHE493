@@ -1,6 +1,8 @@
 import numpy as np
 import math
 import sympy as sym
+import csv
+
 
 
 def evenDistribution(n, b):
@@ -45,6 +47,11 @@ def Sn_function(G, deltaR, p_p):
 
         sigma[i] = sum([xN[j.key] * (1 - j.Zn[0]) for j in node.Ni_list])
 
+    # y = str(sum([c[i]/(d[i] + sigma[i]) for i in range(N)])/N)
+    # with open('Sn_function_10N.csv', "w+") as my_csv:
+    #     csvWriter = csv.writer(my_csv, delimiter=',')
+    #     csvWriter.writerow(y)
+
     return [xN, sum([c[i]/(d[i] + sigma[i]) for i in range(N)])/N]
 
 
@@ -59,11 +66,12 @@ def gradient(G, T, p_p, B, deltaR):
 
     # f_part_def = [f_partials[i].subs([(xN[j], 1) for j in range(N)]) for i in range(N)]
     # index = np.argmin(f_part_def)
-
     for k in range(T):
         #
         f_part_def = [f_partials[i].subs([(xN[j], y[k][j]) for j in range(N)]) for i in range(N)]
         index = np.argmin(f_part_def)
+        if k == 0:
+            vip_node = index
         #
         y_bar[k] = [0 for i in range(N)]
         y_bar[k][index] = B
@@ -75,5 +83,9 @@ def gradient(G, T, p_p, B, deltaR):
         #
         y[k+1] = [y[k][i] + alpha * (y_bar[k][i] - y[k][i]) for i in range(N)]
 
-    return y[-1]
+    # round down final result so we dont have fractions of balls, and don't go over budget
+    deltaB = [math.floor(y[-1][i]) for i in range(N)]
+    # add remainder of budget to most influential node
+    deltaB[vip_node] += B - sum(deltaB)
+    return deltaB
 
