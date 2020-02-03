@@ -58,19 +58,20 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-max_n = 200
-m_mem = 10
+predraw_factor = 1
+max_n = predraw_factor * 200
+m_mem = predraw_factor * 10
 num_sim = 50
 # adjFile = '100_node_adj_2.csv'
 # outputFile = 'weight_demo_metrics.csv'
 # ballFile = 'ball_proportions_100_nodes.csv'
 
-adjFile = '10node.csv'
-outputFile = 'pre_grad_10N_50sim.csv'
-ballFile = '10node_proportions.csv'
+adjFile = '6node_center.csv'
+outputFile = 'post_grad_6N_center_50sim_ini2.csv'
+ballFile = '6node_proportions.csv'
 ########
-budget = 20
-deltaR = 2
+budget = 50 / predraw_factor
+deltaR = 5 / predraw_factor
 tenacity = 1  # weight of node's own Urn in Super Urn
 adj_matrix = importG(adjFile)
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
@@ -78,7 +79,7 @@ adj_matrix = importG(adjFile)
 # deltaB = int(lmax)
 # deltaR = deltaB*2
 
-opt_method = [4, 3, 0]
+opt_method = [4, 3, 1]
 # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
