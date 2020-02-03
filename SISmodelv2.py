@@ -28,9 +28,9 @@ def calculateParameters(G, N, deltaB, deltaR):
 def SISInitilize(T, N, initial):
     P0 = [int(initial[x][0])/(int(initial[x][0])+int(initial[x][1])) for x in range(0, N)]
 
-    Pi=[0 for x in range(0,T)]
+    Pi=[0 for x in range(0,T+1)]
     Pi[0]=P0
-    avgInfection = [0 for x in range(0,T)]
+    avgInfection = [0 for x in range(0,T+1)]
     avgInfection[0] = sum(P0)/N
 
     return Pi, avgInfection
@@ -47,11 +47,12 @@ def SISModelStep(adjFile, N, deltaB, deltaR, Pi, avgInfSIS, t):
         neighborInfected = 1
         for j in range(0,N):
             if(adj[i][j]==1):
-                neighborInfected = neighborInfected*(1-betaSIS[i]*Pi[t-1][j])
-        Pit[i] = (Pi[t-1][i]*(1-deltaSIS[i]) + (1-Pi[t-1][i])*(1-neighborInfected))
+                #t is an index off from polya so t == t-1 bc we need the 0 index to be the initilized values
+                neighborInfected = neighborInfected*(1-betaSIS[i]*Pi[t][j])
+        Pit[i] = (Pi[t][i]*(1-deltaSIS[i]) + (1-Pi[t][i])*(1-neighborInfected))
         avgInfectionRate = avgInfectionRate+(1/N)*Pit[i]
-    Pi[t] = Pit
-    avgInfSIS[t] = avgInfectionRate    
+    Pi[t+1] = Pit
+    avgInfSIS[t+1] = avgInfectionRate    
 
     return Pi, avgInfSIS
 

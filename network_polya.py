@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
-#from celluloid import Camera
+from celluloid import Camera
 import matplotlib
 import OptimizationMethods as opt
 import SISmodelv2 as sis
@@ -237,7 +237,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
 
-"""
+
 def update_graph(G, data):
     fig = plt.figure()
     camera = Camera(fig)
@@ -265,7 +265,7 @@ def update_graph(G, data):
     new = camera.animate()
     new.save('animation_1.html')
     print('i made it')
-"""
+
 #def printGraph(G, c):  # prints a plot of the network for reference
 
 #
@@ -299,7 +299,9 @@ def numNeighbors(G):
     return neighbors
 
 def importGraph(adjFile):
-    bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
+    data = numpy.array(pd.read_csv(adjFile, header=None))
+    #.as_matrix()
+    bigG = nx.from_numpy_matrix(data)
     return bigG
 #######################################
 # PARAMETER INPUT
@@ -327,11 +329,14 @@ def main():
     adjFile = '10node.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [4, 3, 1]
+    opt_method = [3, 3, 1]
     #opt_method = [2]
     #network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
-    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls("./10node_proportions_2.csv"), opt_method, tenacity_factor, SIS=1)
-
+    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor, SIS=1)
+    print("Polya: \n")
+    print(polya)
+    print("\n SIS: \n")
+    print(SIS)
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
