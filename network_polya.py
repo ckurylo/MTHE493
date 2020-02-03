@@ -205,21 +205,23 @@ def sisParallel(adjFile, N, delta, Pi, avgInf, n):
     PiSIS, avgInfSIS = sis.SISModelStep(adjFile, N, deltaB, deltaR, Pi, avgInf, n)
     return PiSIS, avgInfSIS
 
-def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacity):
+def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacity, SIS=0):
     defConstants(M, delta[0], delta[1], tenacity)
 
     polya_network = createPolyaNetwork(adjFile, node_balls)  # create network of urns
     #infection_data = {}
     disease_metrics = []
     N = len(list(polya_network.nodes))
-    PiSIS, avgInfSIS = sis.SISInitilize(max_n, N ,node_balls)
+    if(SIS):
+        PiSIS, avgInfSIS = sis.SISInitilize(max_n, N ,node_balls)
     print('\npolya time:')
     for n in range(max_n):  # run simulation for max_n steps
         print('\r'+str(n+1), end='')
         v, delta = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
         disease_metrics.append(m)
-        PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
+        if(SIS):
+            PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
         #infection_data[n] = {}
         #for node in polya_network.nodes:
             #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
