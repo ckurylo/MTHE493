@@ -223,13 +223,14 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
         disease_metrics.append(m)
         if(SIS):
             PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
-            diseaseSISresult.append(avgInfSIS)
+            diseaseSISresult = avgInfSIS
         #infection_data[n] = {}
         #for node in polya_network.nodes:
             #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
         # printNetwork(polya_network, n,v,m)  # print network attributes
     #update_graph(polya_network, infection_data)
     if(SIS):
+        diseaseSISresult.pop()
         return disease_metrics, diseaseSISresult
     else:
         return disease_metrics
