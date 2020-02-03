@@ -38,13 +38,13 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
     node_balls = get_balls(ballFile)
     ave_p = 0
     for i in range(num_nodes):
-        ave_p += node_balls[i][0] / sum(node_balls[i])
+        ave_p += node_balls[i][1] / sum(node_balls[i])
     ave_p /= num_nodes
     print(ave_p)
 
     for i in range(num_sim):
         print('simulation:')
-        print('\r'+str(i), end='')
+        print('\r'+str(i+1), end='')
         metrics = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method, tenacity)
         for j in range(max_n):
             for k in range(3):
@@ -58,30 +58,31 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-max_n = 100
-m_mem = 8
-num_sim = 1
-adjFile = '100_node_adj_2.csv'
-outputFile = 'weight_demo_metrics.csv'
-ballFile = 'ball_proportions_100_nodes.csv'
+max_n = 200
+m_mem = 10
+num_sim = 50
+# adjFile = '100_node_adj_2.csv'
+# outputFile = 'weight_demo_metrics.csv'
+# ballFile = 'ball_proportions_100_nodes.csv'
 
-# adjFile = '10node.csv'
-# outputFile = '10node_case2.csv'
-# ballFile = '10node_proportions.csv'
+adjFile = '10node.csv'
+outputFile = 'pre_grad_10N_50sim.csv'
+ballFile = '10node_proportions.csv'
 ########
-budget = 500
+budget = 20
 deltaR = 2
-tenacity = 100000  # weight of node's own Urn in Super Urn
+tenacity = 1  # weight of node's own Urn in Super Urn
 adj_matrix = importG(adjFile)
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
 # print(lmax)
 # deltaB = int(lmax)
 # deltaR = deltaB*2
 
-opt_method = [4, 5]
-# opt_method: 1 for uniform vaccine deployment, 2 for random
-# [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
-# [4, T] for gradient descent, T the number of iterations of the algo for each time step
+opt_method = [4, 3, 0]
+# opt_method: [1] for uniform vaccine deployment, [2] for random
+    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
+    # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
+            # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method,

@@ -48,20 +48,24 @@ def plot_In(inputF_list, case, axis_list, legend, max_n, p, plot_SIS):
     plt.xlabel('Time (n)')
     plt.ylabel('Infection Rate $\\tilde{I}_n$')
     plt.legend(legend)
-    #plt.title('Single Node Infection Diffusion into Healthy Graph, Infinite Memory')
+    plt.title('Curing 10-node network with Gradient Descent curing deployment')
     plt.show()
 
 
 def main():
     #input = ['bigDEATH_fin_data.csv', 'lilDEATH_fin_data.csv']
-    input = ['10node_case3_degCent.csv', '10node_case3_closeCent.csv', '10node_case3_betCent.csv']
+    #input = ['10node_case3_degCent.csv', '10node_case3_closeCent.csv', '10node_case3_betCent.csv']
     #input = ['10node_case1.csv', '10node_case2.csv']
-    max_n = 50
+    input = ['10node_T1_postdraw.csv', '10node_T10_predraw.csv']
+    input = ['demo.csv', 'pre_grad_10N_50sim.csv']
+    max_n = 200
     axis = [0, max_n, 0, 1]
     p = getP('10node_proportions.csv')
     case = 'a'
     #legend = ['Central Node', 'Peripheral Node', 'Average $ \\rho$']
     legend = ['degree centrality', 'closeness centrality', 'betweenness centrality',  'Average $ \\rho$']
+    legend = ['post draw opt', 'pre draw opt', 'Average $ \\rho$']
+    #legend = []
     #legend = ['uniform distribution', 'random distribution', 'Average $ \\rho$']
     plot_In(input, case, axis, legend, max_n, p, plot_SIS = False)
 
