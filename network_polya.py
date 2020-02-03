@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
-from celluloid import Camera
+#from celluloid import Camera
 import matplotlib
 import OptimizationMethods as opt
 import SISmodelv2 as sis
@@ -213,6 +213,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
     disease_metrics = []
     N = len(list(polya_network.nodes))
     if(SIS):
+        diseaseSISresult = []
         PiSIS, avgInfSIS = sis.SISInitilize(max_n, N ,node_balls)
     print('\npolya time:')
     for n in range(max_n):  # run simulation for max_n steps
@@ -222,18 +223,21 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
         disease_metrics.append(m)
         if(SIS):
             PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
+            diseaseSISresult.append(avgInfSIS)
         #infection_data[n] = {}
         #for node in polya_network.nodes:
             #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
         # printNetwork(polya_network, n,v,m)  # print network attributes
     #update_graph(polya_network, infection_data)
-
-    return disease_metrics
+    if(SIS):
+        return disease_metrics, diseaseSISresult
+    else:
+        return disease_metrics
 
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
 
-
+"""
 def update_graph(G, data):
     fig = plt.figure()
     camera = Camera(fig)
@@ -261,7 +265,7 @@ def update_graph(G, data):
     new = camera.animate()
     new.save('animation_1.html')
     print('i made it')
-
+"""
 #def printGraph(G, c):  # prints a plot of the network for reference
 
 #
@@ -302,7 +306,7 @@ def importGraph(adjFile):
 
 
 def get_balls(ballName):
-    g = pd.read_csv(ballName, header=None).values.tolist()
+    g = pd.read_csv(ballName, header=None, encoding='utf-8').values.tolist()
     balls = []
     for i in range(len(g)):
         BR = g[i][0].split('\t')
@@ -325,7 +329,9 @@ def main():
 
     opt_method = [4, 3, 1]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
+    #network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
+    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls("./10node_proportions_2.csv"), opt_method, tenacity_factor, SIS=1)
+
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
