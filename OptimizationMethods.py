@@ -15,6 +15,7 @@ def randomDistribution(n, b):
     deltaB = [math.floor(values[i+1] - values[i]) for i in range(n)]
     return deltaB
 
+
 def heuristic(n, b, N, C, S):
     deltaB = [0]*n
     totalInfectionCentralityRatio = 0

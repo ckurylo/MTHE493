@@ -7,7 +7,6 @@ import csv
 def importG(graphName):
     return pd.read_csv(graphName, header=None).values.tolist()
 
-
 def generateBallProportions(delta, n):
     maxdelta = max(delta)
     B_bd = [maxdelta * 10, maxdelta * 11]
@@ -29,7 +28,6 @@ def get_balls(ballName):
         BR[1] = int(BR[1])
         balls.append(BR)
     return balls
-
 
 def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, outputFile, opt_method, tenacity):
 
@@ -58,16 +56,16 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-max_n = 200
-m_mem = 10
-num_sim = 50
+max_n = 10
+m_mem = 2
+num_sim = 10
 # adjFile = '100_node_adj_2.csv'
 # outputFile = 'weight_demo_metrics.csv'
 # ballFile = 'ball_proportions_100_nodes.csv'
 
-adjFile = '10node.csv'
-outputFile = 'pre_grad_10N_50sim.csv'
-ballFile = '10node_proportions.csv'
+adjFile = '6node.csv'
+outputFile = 'post_grad_6N_10sim.csv'
+ballFile = '6node_proportions.csv'
 ########
 budget = 20
 deltaR = 2
@@ -78,7 +76,7 @@ adj_matrix = importG(adjFile)
 # deltaB = int(lmax)
 # deltaR = deltaB*2
 
-opt_method = [4, 3, 0]
+opt_method = [3, 4]
 # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
