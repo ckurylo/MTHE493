@@ -5,24 +5,56 @@ import csv
 
 
 
-def evenDistribution(n, b):
-    deltaB = [math.floor(b/n) for i in range(n)]
+def evenDistribution(n, b, p_p=0, G=0):
+    if p_p:
+        drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
+        count = sum(drawn)
+        if count==0:
+            return [0]*n
+        dist = math.floor(b/count)
+        deltaB = [dist if drawn[i]==1 else 0 for i in range(n)]
+    else:
+        deltaB = [math.floor(b/n) for i in range(n)]
     return deltaB
 
-def randomDistribution(n, b):
-    values = [0.0, b] + list(np.random.uniform(low=0.0,high=b,size=n-1))
-    values.sort()
-    deltaB = [math.floor(values[i+1] - values[i]) for i in range(n)]
+def randomDistribution(n, b, p_p=0, G=0):
+    if(p_p):
+        drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
+        count = sum(drawn)
+        if count==0:
+            return [0]*n
+        values = [0.0, b] + list(np.random.uniform(low=0.0,high=b,size=count-1))
+        values.sort()
+        dist = [math.floor(values[i+1] - values[i]) for i in range(count)]
+        deltaB = [dist.pop(0) if drawn[i]==1 else 0 for i in range(n)]
+    else:
+        values = [0.0, b] + list(np.random.uniform(low=0.0,high=b,size=n-1))
+        values.sort()
+        deltaB = [math.floor(values[i+1] - values[i]) for i in range(n)]
     return deltaB
 
 
-def heuristic(n, b, N, C, S):
-    deltaB = [0]*n
-    totalInfectionCentralityRatio = 0
-    for i in range(n):
-        totalInfectionCentralityRatio += N[i]*C[i]*S[i]
-    for i in range(n):
-        deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
+def heuristic(n, b, N, C, S, p_p=0, G=0):
+    if(p_p):
+        drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
+        count = sum(drawn)
+        deltaB = [0]*n
+        totalInfectionCentralityRatio = 0
+        for i in range(n):
+            if (drawn[i]):
+                totalInfectionCentralityRatio += N[i]*C[i]*S[i]
+        for i in range(n):
+            if (drawn[i]):
+                deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
+        print(drawn)
+        print(deltaB)
+    else:
+        deltaB = [0]*n
+        totalInfectionCentralityRatio = 0
+        for i in range(n):
+            totalInfectionCentralityRatio += N[i]*C[i]*S[i]
+        for i in range(n):
+            deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
     return deltaB
 
 

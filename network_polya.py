@@ -130,16 +130,16 @@ def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns
 
 def getDelta(G, deployment_method):
     if deployment_method[0] == 1:
-        deltaB = opt.evenDistribution(G.number_of_nodes(), BUDGET)
+        deltaB = opt.evenDistribution(G.number_of_nodes(), BUDGET, deployment_method[2], G)
     elif deployment_method[0] == 2:
-        deltaB = opt.randomDistribution(G.number_of_nodes(), BUDGET)
+        deltaB = opt.randomDistribution(G.number_of_nodes(), BUDGET, deployment_method[2], G)
     elif deployment_method[0] == 3:
         S = []
         N = numNeighbors(G)
         C = centralityCalculation(G, deployment_method[1])
         for i in G.nodes:
             S.append(G.nodes[i]['superUrn'].Sm[0])
-        deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S)
+        deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
     elif deployment_method[0] == 4:
         deltaB = opt.gradient(G, deployment_method[1], deployment_method[2], BUDGET, DELTA_R)
     deltaR = G.number_of_nodes()*[DELTA_R]
@@ -148,11 +148,11 @@ def getDelta(G, deployment_method):
 
 def networkTimeStep(G, opt_method):  # increment time and proceed to next step in network draw process
     state_vector = []
-    if opt_method[0] != 4 or opt_method[2] == 0:  # get vaccine deployment if pre-draw optimization
+    if opt_method[2] == 0:  # get vaccine deployment if pre-draw optimization
         delta = getDelta(G, opt_method)
     for i in G.nodes:
         G.nodes[i]['superUrn'].drawBall()
-    if opt_method[0] == 4 and opt_method[2] == 1:  # get vaccine deployment if post-draw optimization
+    if opt_method[2] == 1:  # get vaccine deployment if post-draw optimization
         delta = getDelta(G, opt_method)
     for i in G.nodes:
         G.nodes[i]['superUrn'].nextDelta([delta[0][i], delta[1][i]])
@@ -330,7 +330,7 @@ def main():
     adjFile = '10node.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [3, 3, 1]
+    opt_method = [3, 1, 1]
     #opt_method = [2]
     #network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
     polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor, SIS=1)
