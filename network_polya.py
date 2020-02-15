@@ -124,6 +124,8 @@ def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
+    nx.draw(G, pos = nx.planar_layout(G))
+    plt.show()
     return G
 
 
@@ -310,12 +312,13 @@ def main():
     delta = [budget, deltaR]
     max_n = 50
     tenacity_factor = 1  # weight of node's own Urn in Super Urn
-    adjFile = '10node.csv'
+    adjFile = '100_node_adj.csv'
+    adjFile = 'madagascar.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [4, 3, 1]
+    opt_method = [1, 3, 1]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
+    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_96_nodes.csv'), opt_method, tenacity_factor)
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step

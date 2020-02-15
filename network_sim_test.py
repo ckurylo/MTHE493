@@ -66,12 +66,14 @@ num_sim = 50
 # outputFile = 'weight_demo_metrics.csv'
 # ballFile = 'ball_proportions_100_nodes.csv'
 
-adjFile = '6node_center.csv'
-outputFile = 'post_grad_6N_center_50sim_ini2.csv'
+adjFile = '6node_bridge.csv'
+outputFile = 'uni_6N_bridge_50sim_ini1.csv'
 ballFile = '6node_proportions.csv'
 ########
-budget = 50 / predraw_factor
-deltaR = 5 / predraw_factor
+budget = 20 / predraw_factor
+deltaR = 2 / predraw_factor
+# budget = 50 / predraw_factor
+# deltaR = 5 / predraw_factor
 tenacity = 1  # weight of node's own Urn in Super Urn
 adj_matrix = importG(adjFile)
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
@@ -79,11 +81,11 @@ adj_matrix = importG(adjFile)
 # deltaB = int(lmax)
 # deltaR = deltaB*2
 
-opt_method = [4, 3, 1]
+opt_method = [1, 1, 1]
 # opt_method: [1] for uniform vaccine deployment, [2] for random
-    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
-    # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
-            # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+# [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
+# [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
+# k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method,
