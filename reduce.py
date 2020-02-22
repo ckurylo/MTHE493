@@ -41,9 +41,19 @@ def getShortestPath(v, n, g):
 def getSCV(v, g):
     return nx.degree_centrality(g)[v]
 
-def plotGraph(g):
-    print(type(g))
-    nx.draw(g, layout=nx.spring_layout(g), with_labels=True, node_size = 30, width = 0.25)
+def plotGraph(reduced, g):
+    colourmap = []
+    for node in g.nodes:
+        if node in reduced.nodes:
+            print('kept!', node)
+            colourmap.append('blue')
+        else:
+            colourmap.append('red')
+
+    plt.figure(1)
+    nx.draw(g, node_color=colourmap, layout=nx.spring_layout(g), with_labels=True, node_size=30, width=0.25)
+    #plt.figure(2)
+    #nx.draw(reduced, node_color='blue', layout=nx.spring_layout(reduced), with_labels=True, node_size=30, width=0.25)
     plt.show()
 
 def main():
@@ -55,11 +65,7 @@ def main():
     community_alg = 0
 
     reduced_graph = reduce(G, iterations, start_node, community_alg)
-    plotGraph(reduced_graph)
-
-    #layout = nx.spring_layout(reduced_graph)
-    #nx.draw(reduced_graph, pos=layout, node_size=30, width=0.25)
-
+    plotGraph(reduced_graph, G)
 
 if __name__=='__main__':
     main()
