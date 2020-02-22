@@ -5,7 +5,7 @@ from networkx.algorithms import community
 import matplotlib.pyplot as plt
 
 #graph reduction algorithm, finds important nodes and builds paths to them
-def reduce(g, r, n, c_alg):
+def reduce(g, n, c_alg):
     paths = [[]]
     g_reduced = nx.Graph()
     loc = getCommunities(g)
@@ -59,12 +59,15 @@ def plotGraph(reduced, g):
 def main():
     adjFile = 'goodmad.csv'
     G = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
-    iterations = 10
+    iterations = 6
     selection_criteria = 0
     start_node = 0
     community_alg = 0
 
-    reduced_graph = reduce(G, iterations, start_node, community_alg)
+    for i in range(iterations):
+        reduced_graph = reduce(G, start_node, community_alg)
+        G = reduced_graph
+
     plotGraph(reduced_graph, G)
 
 if __name__=='__main__':
