@@ -269,10 +269,8 @@ def centralityCalculation(G, cent_mes):
     close_centrality = nx.closeness_centrality(G)
     perc_cent = percolation(G)
     close_cent = [k for k in close_centrality.values()]
-    #print(deg_centrality)
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     bet_cent = [k for k in bet_centrality.values()]
-    #print(deg_centrality)
     if cent_mes == 1:
         return deg_cent
     elif cent_mes == 2:
