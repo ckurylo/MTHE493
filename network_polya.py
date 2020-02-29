@@ -125,6 +125,7 @@ def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
+
     return G
 
 
@@ -181,7 +182,6 @@ def diseaseMetrics(G, state_vector):
 
     # average of proportion of infection across network
     U_n = (1/N)*rho_tot
-
     metrics = [I_n, S_n, U_n]
     return metrics
 
@@ -214,7 +214,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
     N = len(list(polya_network.nodes))
     if(SIS):
         diseaseSISresult = []
-        PiSIS, avgInfSIS = sis.SISInitilize(max_n, N ,node_balls)
+        PiSIS, avgInfSIS = sis.SISInitilize(max_n, N, node_balls)
     print('\npolya time:')
     for n in range(max_n):  # run simulation for max_n steps
         print('\r'+str(n+1), end='')
@@ -237,7 +237,6 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
 
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
-
 
 def update_graph(G, data):
     fig = plt.figure()
@@ -279,9 +278,11 @@ def update_graph(G, data):
 #         polyaUrn.print_current_n()
 
 def centralityCalculation(G, cent_mes):
+
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
     close_centrality = nx.closeness_centrality(G)
+    perc_cent = percolation(G)
     close_cent = [k for k in close_centrality.values()]
     #print(deg_centrality)
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
@@ -291,17 +292,28 @@ def centralityCalculation(G, cent_mes):
         return deg_cent
     elif cent_mes == 2:
         return close_cent
+    elif cent_mes == 3:
+        return perc_cent
     else:
         return bet_cent
 
+def percolation(G):
+    balldict = {}
+
+    for node in G.nodes:
+        balldict[node] = G.nodes[node]['superUrn'].Um[0]
+
+    centrality = nx.percolation_centrality(G, states = balldict)
+
+    return centrality
 
 def numNeighbors(G):
     neighbors = [len(list(G.neighbors(n))) for n in G]
     return neighbors
 
 def importGraph(adjFile):
+    #bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
     data = numpy.array(pd.read_csv(adjFile, header=None))
-    #.as_matrix()
     bigG = nx.from_numpy_matrix(data)
     return bigG
 #######################################
@@ -309,13 +321,14 @@ def importGraph(adjFile):
 
 
 def get_balls(ballName):
-    g = pd.read_csv(ballName, header=None, encoding='utf-8').values.tolist()
+    g = pd.read_csv(ballName, header=None).values.tolist()
     balls = []
     for i in range(len(g)):
         BR = g[i][0].split('\t')
         BR[0] = int(BR[0])
         BR[1] = int(BR[1])
         balls.append(BR)
+
     return balls
 
 
@@ -330,18 +343,20 @@ def main():
     adjFile = '10node.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [3, 1, 1]
+    opt_method = [3, 4, 0]
     #opt_method = [2]
-    #network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor)
-    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions_2.csv'), opt_method, tenacity_factor, SIS=1)
-    print("Polya: \n")
-    print(polya)
-    print("\n SIS: \n")
-    print(SIS)
+    #network_simulation(adjFile, delta, M, max_n, get_balls('6node_proportions.csv'), opt_method, tenacity_factor)
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+
+
+    polya, SIS - network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor, SIS=1)
+    print("Polya: \n")
+    print(polya)
+    print("\n SIS: \n")
+    print(SIS)
     """
     G, cent = centralityCalculation('100_node_adj.csv')
     neigh = numNeighbors(G)
@@ -353,4 +368,3 @@ def main():
     """
 
 if __name__=='__main__':
-    main()
