@@ -352,7 +352,7 @@ def main():
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
 
-    polya, SIS - network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor, SIS=1)
+    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor, SIS=1)
     print("Polya: \n")
     print(polya)
     print("\n SIS: \n")
