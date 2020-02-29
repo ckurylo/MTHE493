@@ -271,7 +271,6 @@ def centralityCalculation(G, cent_mes):
     close_cent = [k for k in close_centrality.values()]
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     bet_cent = [k for k in bet_centrality.values()]
-    
     if cent_mes == 1:
         return deg_cent
     elif cent_mes == 2:
