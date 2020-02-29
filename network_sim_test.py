@@ -2,6 +2,7 @@ import network_polya as polya
 import pandas as pd
 import numpy
 import csv
+import file_io as io
 
 
 def importG(graphName):
@@ -86,6 +87,16 @@ opt_method = [1, 1, 1]
 # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
 # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
 # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+
+
+### Initial Conditions File
+ini_fileName = ''
+
+### Network COnditions Parameters
+opt_method = [1, 1, 1]
+num_o=
+
+
 
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method,
