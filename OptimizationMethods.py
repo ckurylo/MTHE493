@@ -6,7 +6,7 @@ import csv
 
 
 def evenDistribution(n, b, p_p=0, G=0):
-    if p_p:
+    if(p_p==1):
         drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
         count = sum(drawn)
         if count==0:
@@ -18,7 +18,7 @@ def evenDistribution(n, b, p_p=0, G=0):
     return deltaB
 
 def randomDistribution(n, b, p_p=0, G=0):
-    if(p_p):
+    if(p_p==1):
         drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
         count = sum(drawn)
         if count==0:
@@ -35,19 +35,21 @@ def randomDistribution(n, b, p_p=0, G=0):
 
 
 def heuristic(n, b, N, C, S, p_p=0, G=0):
-    if(p_p):
+    if(p_p==1):
         drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
         count = sum(drawn)
         deltaB = [0]*n
+        if(count==0):
+            return deltaB
         totalInfectionCentralityRatio = 0
         for i in range(n):
-            if (drawn[i]):
+            if (drawn[i]==1):
                 totalInfectionCentralityRatio += N[i]*C[i]*S[i]
+        if(totalInfectionCentralityRatio==0):
+            return deltaB
         for i in range(n):
-            if (drawn[i]):
+            if (drawn[i]==1):
                 deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
-        print(drawn)
-        print(deltaB)
     else:
         deltaB = [0]*n
         totalInfectionCentralityRatio = 0

@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 import pandas as pd
 import OptimizationMethods as opt
@@ -21,7 +22,11 @@ def calculateParameters(G, N, deltaB, deltaR):
 
     betaSIS = [0.15]*N #probability that a node will get infected through contact with a single infected neighbor
 
+    #equal ratios
     deltaSIS = [betaSIS[i]*deltaB[i]/deltaR[i] for i in range(0,N)]
+
+    #minimize divergence
+    #sum([ P(x)*math.log2(P(x)/Q(x)) for x in [0,1]])
 
     return betaSIS, deltaSIS
 
