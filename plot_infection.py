@@ -48,7 +48,7 @@ def plot_In(inputF_list, case, axis_list, legend, max_n, p, plot_SIS):
     plt.xlabel('Time (n)')
     plt.ylabel('Infection Rate $\\tilde{I}_n$')
     plt.legend(legend)
-    plt.title('Curing 6-node centered network with Grad Descent')
+    plt.title('Curing 6-node bridge network with heuristic method')
     plt.show()
 
 
@@ -56,16 +56,23 @@ def main():
     #input = ['bigDEATH_fin_data.csv', 'lilDEATH_fin_data.csv']
     #input = ['10node_case3_degCent.csv', '10node_case3_closeCent.csv', '10node_case3_betCent.csv']
     #input = ['10node_case1.csv', '10node_case2.csv']
-    input = ['10node_T1_postdraw.csv', '10node_T10_predraw.csv']
-    input = ['pre_grad_6N_center_50sim.csv', 'post_grad_6N_center_50sim.csv']
-    max_n = 200
+    #input = ['pre_grad_6N_center_20sim_ini2.csv']
+    input = ['post_grad_6N_center_50sim_ini2.csv']
+    #input = ['uni_6N_bridge_50sim_ini1.csv', 'random_6N_bridge_50sim_ini1.csv', 'deg_cent_6N_bridge_50sim_ini1.csv',
+    #         'close_cent_6N_bridge_50sim_ini1.csv', 'bet_cent_6N_bridge_50sim_ini1.csv',
+    #         'pre_grad_6N_bridge_50sim_ini1.csv', 'post_grad_6N_bridge_50sim_ini1.csv']
+    #input = ['deg_cent_6N_bridge_50sim_ini1.csv',
+    #         'close_cent_6N_bridge_50sim_ini1.csv', 'bet_cent_6N_bridge_50sim_ini1.csv']
+    input = ['democrat.csv']
+    max_n = 10
     axis = [0, max_n, 0, 1]
     p = getP('10node_proportions.csv')
     case = 'a'
     #legend = ['Central Node', 'Peripheral Node', 'Average $ \\rho$']
-    legend = ['degree centrality', 'closeness centrality', 'betweenness centrality',  'Average $ \\rho$']
-    legend = ['pre draw opt', 'post draw opt', 'Average $ \\rho$']
-    #legend = []
+    #legend = ['pre grad', 'post grad', 'average $ \\rho$']
+    #legend = ['degree centrality', 'closeness centrality', 'betweenness centrality',  'Average $ \\rho$']
+    #legend = ['uniform', 'random', 'deg_cent', 'close_cent', 'bet_cent', 'pre draw gradient', 'post draw gradient', 'Average $ \\rho$']
+    legend = []
     #legend = ['uniform distribution', 'random distribution', 'Average $ \\rho$']
     plot_In(input, case, axis, legend, max_n, p, plot_SIS = False)
 
