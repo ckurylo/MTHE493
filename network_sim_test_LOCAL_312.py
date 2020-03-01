@@ -103,4 +103,3 @@ polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_n
 
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
 # print(lmax)
-

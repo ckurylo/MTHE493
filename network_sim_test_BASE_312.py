@@ -59,34 +59,28 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 
 ###############################
 # PARAMETER INPUT
-### Initial Conditions File
-ini_fileName = 'ini1.txt'
 predraw_factor = 1
 max_n = predraw_factor * 200
 m_mem = predraw_factor * 10
-budget = 20 / predraw_factor
-deltaR = 2 / predraw_factor
-
-#########################################
-# Create ini file once, comment out after
-io.ini_to_ini_file(predraw_factor, max_n, m_mem, budget, deltaR, ini_fileName)
-##########################################
-# Read ini file
-iniList = io.ini_file_to_ini(ini_fileName)
-predraw_factor = iniList[0]
-max_n = iniList[1]
-m_mem = iniList[2]
-budget = iniList[3]
-deltaR = iniList[4]
-ballFile = iniList[5]
-
-### Network COnditions Parameters
 num_sim = 50
+# adjFile = '100_node_adj_2.csv'
+# outputFile = 'weight_demo_metrics.csv'
+# ballFile = 'ball_proportions_100_nodes.csv'
 
 adjFile = '6node_bridge.csv'
-adj_matrix = importG(adjFile)
-num_nodes = len(adj_matrix[0])
+outputFile = 'uni_6N_bridge_50sim_ini1.csv'
 ballFile = '6node_proportions.csv'
+########
+budget = 20 / predraw_factor
+deltaR = 2 / predraw_factor
+# budget = 50 / predraw_factor
+# deltaR = 5 / predraw_factor
+tenacity = 1  # weight of node's own Urn in Super Urn
+adj_matrix = importG(adjFile)
+# lmax = max(numpy.linalg.eig(adj_matrix)[0])
+# print(lmax)
+# deltaB = int(lmax)
+# deltaR = deltaB*2
 
 opt_method = [1, 1, 1]
 # opt_method: [1] for uniform vaccine deployment, [2] for random
@@ -95,12 +89,15 @@ opt_method = [1, 1, 1]
 # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
 
-outputFile = io.graph_to_string(num_sim, opt_method, num_nodes, adjFile.strip('.txt'), ini_fileName.strip('.txt'),
-                                ballFile.strip('.txt'))
+### Initial Conditions File
+ini_fileName = ''
 
-polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, outputFile, opt_method,
-               tenacity=1)
+### Network COnditions Parameters
+opt_method = [1, 1, 1]
+num_o=
 
-# lmax = max(numpy.linalg.eig(adj_matrix)[0])
-# print(lmax)
 
+
+
+polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, len(adj_matrix[0]), outputFile, opt_method,
+               tenacity)
