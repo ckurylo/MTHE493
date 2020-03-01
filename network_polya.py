@@ -334,7 +334,6 @@ def get_balls(ballName):
 
 
 def main():
-
     M = 5
     budget = 25
     deltaR = 2
@@ -347,17 +346,17 @@ def main():
 
     opt_method = [1, 3, 1]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_96_nodes.csv'), opt_method, tenacity_factor)
-  '''
-    opt_method = [3, 4, 0]
+    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_96_nodes.csv'), opt_method,
+                       tenacity_factor)
+
+    #opt_method = [3, 4, 0]
     #opt_method = [2]
     #network_simulation(adjFile, delta, M, max_n, get_balls('6node_proportions.csv'), opt_method, tenacity_factor)
-   '''
+
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
-            # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
-
+    # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
     polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor, SIS=1)
     print("Polya: \n")

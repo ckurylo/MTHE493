@@ -101,7 +101,6 @@ outputFile = io.graph_to_string(num_sim, opt_method, num_nodes, adjFile.strip('.
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, outputFile, opt_method,
                tenacity=1)
 
-<<<<<<< HEAD
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
 # print(lmax)
->>>>>>> a3486383e99484415d77610f5f4ec4ccecb3f2b6
+
