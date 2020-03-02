@@ -61,15 +61,16 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, o
 # PARAMETER INPUT
 ### Initial Conditions File
 ini_fileName = 'ini1.txt'
-predraw_factor = 1
-max_n = predraw_factor * 200
-m_mem = predraw_factor * 10
-budget = 20 / predraw_factor
-deltaR = 2 / predraw_factor
+# predraw_factor = 1
+# max_n = predraw_factor * 200
+# m_mem = predraw_factor * 10
+# budget = 20 / predraw_factor
+# deltaR = 2 / predraw_factor
 
 #########################################
 # Create ini file once, comment out after
-io.ini_to_ini_file(predraw_factor, max_n, m_mem, budget, deltaR, ini_fileName)
+# OR run file_io.py to create your ini file separately
+# io.ini_to_ini_file(predraw_factor, max_n, m_mem, budget, deltaR, ini_fileName)
 ##########################################
 # Read ini file
 iniList = io.ini_file_to_ini(ini_fileName)
@@ -80,7 +81,7 @@ budget = iniList[3]
 deltaR = iniList[4]
 ballFile = iniList[5]
 
-### Network COnditions Parameters
+### Network Conditions Parameters
 num_sim = 50
 
 adjFile = '6node_bridge.csv'
