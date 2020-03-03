@@ -241,7 +241,7 @@ def main():
     max_n = 200
     num_nodes = 7
     num_connections = 3
-    adjFile = '100_node_adj.csv'
+    adjFile = '100N_barabasi_adj.csv'
     network_simulation(adjFile, delta, M, max_n, [])
 
 
