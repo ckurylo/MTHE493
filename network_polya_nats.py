@@ -334,7 +334,7 @@ def main():
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
     """
-    G, cent = centralityCalculation('100_node_adj.csv')
+    G, cent = centralityCalculation('100N_barabasi_adj.csv')
     neigh = numNeighbors(G)
     deltaB1 = opt.evenDistribution(100, 800)
     print(deltaB1)

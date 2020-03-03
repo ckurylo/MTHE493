@@ -340,8 +340,8 @@ def main():
     delta = [budget, deltaR]
     max_n = 50
     tenacity_factor = 1  # weight of node's own Urn in Super Urn
-    adjFile = '100_node_adj.csv'
-    adjFile = 'madagascar.csv'
+    adjFile = '100N_barabasi_adj.csv'
+    adjFile = 'madagascar_weighted_adj.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
     opt_method = [1, 3, 1]
@@ -364,7 +364,7 @@ def main():
     print("\n SIS: \n")
     print(SIS)
     """
-    G, cent = centralityCalculation('100_node_adj.csv')
+    G, cent = centralityCalculation('100N_barabasi_adj.csv')
     neigh = numNeighbors(G)
     deltaB1 = opt.evenDistribution(100, 800)
     print(deltaB1)

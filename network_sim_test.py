@@ -84,7 +84,7 @@ ballFile = iniList[5]
 ### Network Conditions Parameters
 num_sim = 50
 
-adjFile = '6node_bridge.csv'
+adjFile = '6N_bridge_adj.csv'
 adj_matrix = importG(adjFile)
 num_nodes = len(adj_matrix[0])
 ballFile = '6node_proportions.csv'
