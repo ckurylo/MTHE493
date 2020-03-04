@@ -9,16 +9,18 @@ def ini_to_ini_file(predraw_factor, max_n, m_mem, B, deltaR, fileName):
     myStr += 'Markov Memory:\t' + str(m_mem) + '\n'
     myStr += 'Budget:\t' + str(B) + '\n'
     myStr += 'deltaR:\t' + str(deltaR) + '\n'
-    writer = open(fileName, 'w+')
+    myStr += 'Ball Proportion Files:\t' + str(fileName) + '\n'
+    writer = open('ini_files/'+fileName, 'w+')
     writer.writelines(myStr)
 
 
 def ini_file_to_ini(fileName):
-    with open(fileName, 'r') as my_file:
+    with open('ini_files/'+fileName, 'r') as my_file:
         iniStr = my_file.readlines()
     iniList = []
-    for myStr in iniStr:
+    for myStr in iniStr[:-1]:
         iniList.append(int(myStr.split('\t')[1].strip('\n')))
+    iniList.append(str(myStr.split('\t')[1].strip('\n')))
     return iniList
 
 
@@ -45,7 +47,7 @@ def graph_to_string(num_sim, opt_method, num_nodes, graph_type, ini, ballProp):
             myStr += 'perc_cent_'
     else:
         myStr += 'grad_'
-    myStr += str(num_nodes) + 'N_' + str(graph_type) + '_' + ballProp + '_' + str(num_sim) + 'sim_' + str(ini) + '.csv'
+    myStr += str(graph_type) + '_' + ballProp + '_' + str(num_sim) + 'sim_' + str(ini) + '.csv'
     return myStr
 
 

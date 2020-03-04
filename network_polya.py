@@ -125,8 +125,9 @@ def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
-    nx.draw(G, pos = nx.planar_layout(G))
-    plt.show()
+
+    #nx.draw(G, pos = nx.planar_layout(G))
+    #plt.show()
     return G
 
 
@@ -180,7 +181,6 @@ def diseaseMetrics(G, state_vector):
     rho_tot = 0
     for i in G.nodes:
         rho_tot = rho_tot + G.nodes[i]['superUrn'].Um[0]
-
     # average of proportion of infection across network
     U_n = (1/N)*rho_tot
     metrics = [I_n, S_n, U_n]
@@ -216,25 +216,30 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
     if(SIS):
         diseaseSISresult = []
         PiSIS, avgInfSIS = sis.SISInitilize(max_n, N, node_balls)
+
     print('\npolya time:')
     for n in range(max_n):  # run simulation for max_n steps
-        print('\r'+str(n+1), end='')
+        print('\r'+str(n+1), end='')  # print time
+
         v, delta = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v)
         disease_metrics.append(m)
+
         if(SIS):
             PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
             diseaseSISresult = avgInfSIS
+
         #infection_data[n] = {}
         #for node in polya_network.nodes:
             #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
         # printNetwork(polya_network, n,v,m)  # print network attributes
     #update_graph(polya_network, infection_data)
+
     if(SIS):
         diseaseSISresult.pop()
         return disease_metrics, diseaseSISresult
     else:
-        return disease_metrics
+        return disease_metrics, polya_network
 
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
@@ -282,21 +287,23 @@ def centralityCalculation(G, cent_mes):
 
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
+
     close_centrality = nx.closeness_centrality(G)
-    perc_cent = percolation(G)
     close_cent = [k for k in close_centrality.values()]
-    #print(deg_centrality)
+
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     bet_cent = [k for k in bet_centrality.values()]
-    #print(deg_centrality)
+
+    perc_cent = percolation(G)
+
     if cent_mes == 1:
         return deg_cent
     elif cent_mes == 2:
         return close_cent
     elif cent_mes == 3:
-        return perc_cent
-    else:
         return bet_cent
+    else:
+        return perc_cent
 
 def percolation(G):
     balldict = {}
@@ -354,7 +361,7 @@ def main():
     #network_simulation(adjFile, delta, M, max_n, get_balls('6node_proportions.csv'), opt_method, tenacity_factor)
 
     # opt_method: [1] for uniform vaccine deployment, [2] for random
-    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
+    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
     # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
