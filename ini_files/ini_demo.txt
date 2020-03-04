@@ -1,0 +1,6 @@
+Predraw_factor:	0
+Max_n:	2
+Markov Memory:	1
+Budget:	0
+deltaR:	50
+Ball Proportion Files:	ini_demo.txt

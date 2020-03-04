@@ -30,5 +30,17 @@ def get_ball_bounds(fileName, outputFile):
     return [p, ball_proportions]
 
 
+def write_balls_from_G(G, fileName):
+    ball_proportions = []
+    for i in range(G.number_of_nodes()):
+        B = round((1 - G.nodes[i]['superUrn'].Um[0]) * (G.nodes[i]['superUrn'].T + sum(G.nodes[i]['superUrn'].delta)))
+        R = round(G.nodes[i]['superUrn'].Um[0] * (G.nodes[i]['superUrn'].T + sum(G.nodes[i]['superUrn'].delta)))
 
-get_ball_bounds('100N_barabasi_adj.csv', 'ball_proportions_100_nodes.csv')
+        ball_proportions.append([B, R])
+
+    with open(fileName, "w+") as my_csv:
+        csvWriter = csv.writer(my_csv, delimiter='\t')
+        csvWriter.writerows(ball_proportions)
+
+
+#get_ball_bounds('100N_barabasi_adj.csv', 'ball_proportions_100_nodes.csv')
