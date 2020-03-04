@@ -53,7 +53,7 @@ def graph_to_string(num_sim, opt_method, num_nodes, graph_type, ini, ballProp):
 
 def main():
     # PARAMETER INPUT
-    iniNameList = ['Predraw Factor (0 for predraw, 1 for postdraw)', 'Max_n', 'Markov Memory', 'Budget', 'deltaR']
+    iniNameList = ['Predraw Factor (for pre to post conversion)', 'Max_n', 'Markov Memory', 'Budget', 'deltaR']
     print("--------------------------------------------------------\nCREATE INI FILE\n------------------------------------"
           "--------------------\n")
     iniList = []

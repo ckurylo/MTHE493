@@ -36,7 +36,8 @@ def get_balls(ballName):
 def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_mem, num_nodes, outputMetricsFile,
                    outputDirectory, opt_method, tenacity):
 
-    sum_metrics = [3*[0] for _ in range(max_n)]
+    sum_metrics = [4*[0] for _ in range(max_n)]
+
     #node_balls = generateBallProportions(delta, num_nodes)
     node_balls = get_balls(ballFile)
     ave_p = 0
@@ -45,24 +46,28 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
     ave_p /= num_nodes
     print(ave_p)
 
+    total_time = 0
     if num_sim > 1:
         for i in range(num_sim):
             print('simulation:')
             print('\r'+str(i+1), end='')
-            metrics = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method, tenacity)[0]
+            metrics, sim_time = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls,
+                                                         opt_method, tenacity)[0:1]
+            total_time += sim_time
             for j in range(max_n):
                 for k in range(3):
                     sum_metrics[j][k] = sum_metrics[j][k] + metrics[j][k]
         for i in range(max_n):
-            for j in range(3): sum_metrics[i][j] /= num_sim
-
+            for j in range(4): sum_metrics[i][j] /= num_sim
+        sum_metrics[0].append(total_time)
         with open(outputDirectory + outputMetricsFile, "w+") as my_csv:
             csvWriter = csv.writer(my_csv, delimiter=',')
             csvWriter.writerows(sum_metrics)
     #######
     #  single simulation case for the purpose of saving final ball proportions
     else:
-        metrics, G = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method, tenacity)
+        metrics, sim_time, G = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method, tenacity)
+        metrics[0].append(sim_time)
         with open(outputDirectory + outputMetricsFile, "w+") as my_csv:
             csvWriter = csv.writer(my_csv, delimiter=',')
             csvWriter.writerows(metrics)
@@ -72,7 +77,7 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
 ###############################
 # PARAMETER INPUT
 ### Initial Conditions File
-ini_fileName = 'ini_demo.txt'
+ini_fileName = 'ini2_demo.txt'
 # predraw_factor = 1
 # max_n = predraw_factor * 200
 # m_mem = predraw_factor * 10
@@ -105,7 +110,7 @@ outputBallFile = 'ball_prop_demo.csv'  # fileName for creating ball proportions 
 # set budget to 0 in this case, max_n to the time at which we want to pull out ball proportions, and num_sim to 1
 
 
-opt_method = [1, 1, 1]
+opt_method = [1, 1, 0]
 # opt_method: [1] for uniform vaccine deployment, [2] for random
 # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
 # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
