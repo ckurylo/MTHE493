@@ -27,8 +27,8 @@ def get_balls(ballName):
     balls = []
     for i in range(len(g)):
         BR = g[i][0].split('\t')
-        BR[0] = int(BR[0])
-        BR[1] = int(BR[1])
+        BR[0] = int(float(BR[0]))
+        BR[1] = int(float(BR[1]))
         balls.append(BR)
     return balls
 
@@ -49,10 +49,10 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
     total_time = 0
     if num_sim > 1:
         for i in range(num_sim):
-            print('simulation:')
+            print('\nsimulation:')
             print('\r'+str(i+1), end='')
             metrics, sim_time = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls,
-                                                         opt_method, tenacity)[0:1]
+                                                           opt_method, tenacity)[0:2]
             total_time += sim_time
             for j in range(max_n):
                 for k in range(3):
@@ -71,13 +71,13 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
         with open(outputDirectory + outputMetricsFile, "w+") as my_csv:
             csvWriter = csv.writer(my_csv, delimiter=',')
             csvWriter.writerows(metrics)
-        wbp.write_balls_from_G(G, outputDirectory + outputBallFile)
+        wbp.write_balls_from_G(G, 'ball_proportion_files/' + outputBallFile)
 
 
 ###############################
 # PARAMETER INPUT
 ### Initial Conditions File
-ini_fileName = 'ini2_demo.txt'
+ini_fileName = 'ini3_demo.txt'
 # predraw_factor = 1
 # max_n = predraw_factor * 200
 # m_mem = predraw_factor * 10
@@ -91,19 +91,18 @@ ini_fileName = 'ini2_demo.txt'
 ##########################################
 # Read ini file
 iniList = io.ini_file_to_ini(ini_fileName)
-predraw_factor = iniList[0]
+# predraw_factor = iniList[0]
 max_n = iniList[1]
 m_mem = iniList[2]
 budget = iniList[3]
 deltaR = iniList[4]
-ballFile = iniList[5]
 
 ### Network Conditions Parameters
-num_sim = 1
+num_sim = 2
 adjFile = 'adj_files/6N_bridge_adj.csv'
 adj_matrix = importG(adjFile)
 num_nodes = len(adj_matrix[0])
-ballFile = 'ball_proportion_files/6node_proportions.csv'
+ballFile = 'ball_proportion_files/ball_prop_demo.csv'
 outputDirectory = 'demo_files/'
 #######
 outputBallFile = 'ball_prop_demo.csv'  # fileName for creating ball proportions from running a disease

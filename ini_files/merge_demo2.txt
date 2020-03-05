@@ -1,0 +1,6 @@
+Predraw_factor:	1
+Max_n:	10
+Markov Memory:	2
+Budget:	20
+deltaR:	2
+Ball Proportion Files:	merge_demo2.txt

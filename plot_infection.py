@@ -8,8 +8,8 @@ def get_balls(ballName):
     balls = []
     for i in range(len(g)):
         BR = g[i][0].split('\t')
-        BR[0] = int(BR[0])
-        BR[1] = int(BR[1])
+        BR[0] = int(float(BR[0]))
+        BR[1] = int(float(BR[1]))
         balls.append(BR)
     return balls
 
