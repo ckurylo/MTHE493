@@ -9,7 +9,6 @@ def ini_to_ini_file(predraw_factor, max_n, m_mem, B, deltaR, fileName):
     myStr += 'Markov Memory:\t' + str(m_mem) + '\n'
     myStr += 'Budget:\t' + str(B) + '\n'
     myStr += 'deltaR:\t' + str(deltaR) + '\n'
-    myStr += 'Ball Proportion Files:\t' + str(fileName) + '\n'
     writer = open('ini_files/'+fileName, 'w+')
     writer.writelines(myStr)
 
@@ -18,9 +17,8 @@ def ini_file_to_ini(fileName):
     with open('ini_files/'+fileName, 'r') as my_file:
         iniStr = my_file.readlines()
     iniList = []
-    for myStr in iniStr[:-1]:
+    for myStr in iniStr:
         iniList.append(int(myStr.split('\t')[1].strip('\n')))
-    iniList.append(str(myStr.split('\t')[1].strip('\n')))
     return iniList
 
 
@@ -68,11 +66,10 @@ def main():
             except ValueError:
                 print("\n--Please input an integer--\n")
     while True:
-        print("ini File name:", end='\t')
+        print("Please name your ini file:", end='\t')
         B = input()
         try:
-            B = str(B)
-            ini_fileName = B
+            ini_fileName = str(B)
             break
         except ValueError:
             print("\n--Please input a string--\n")

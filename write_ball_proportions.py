@@ -35,6 +35,8 @@ def write_balls_from_G(G, fileName):
     for i in range(G.number_of_nodes()):
         B = round((1 - G.nodes[i]['superUrn'].Um[0]) * (G.nodes[i]['superUrn'].T + sum(G.nodes[i]['superUrn'].delta)))
         R = round(G.nodes[i]['superUrn'].Um[0] * (G.nodes[i]['superUrn'].T + sum(G.nodes[i]['superUrn'].delta)))
+        B = int(B)
+        R = int(R)
 
         ball_proportions.append([B, R])
 

@@ -237,7 +237,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacit
         diseaseSISresult.pop()
         return disease_metrics, diseaseSISresult
     else:
-        return disease_metrics, time.time() - start_time, polya_network
+        return disease_metrics, (time.time() - start_time), polya_network
 
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
@@ -322,8 +322,8 @@ def get_balls(ballName):
     balls = []
     for i in range(len(g)):
         BR = g[i][0].split('\t')
-        BR[0] = int(BR[0])
-        BR[1] = int(BR[1])
+        BR[0] = int(float(BR[0]))
+        BR[1] = int(float(BR[1]))
         balls.append(BR)
 
     return balls
