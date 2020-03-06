@@ -79,7 +79,7 @@ def main():
 
     title = get_user_input('Figure title:')
 
-    metric_i = get_user_input('Metric to plot (In: 0, Sn: 1, Un: 2, Wn: 3, other: 4)')
+    metric_i = int(get_user_input('Metric to plot (In: 0, Sn: 1, Un: 2, Wn: 3, other: 4)'))
     xlabel = 'Time (n)'
     if metric_i == 0:
         ylabel = 'Infection Rate $\\tilde{I}_n$'
