@@ -1,6 +1,10 @@
 import csv
 import pandas as pd
+import os
 
+def get_user_input(prompt):
+    print(prompt + ':', end='\t')
+    return input()
 
 def ave_metrics(inputF_list, inputDirectory, outputFileName, outputDirectory):
     In = []
@@ -35,9 +39,18 @@ def ave_metrics(inputF_list, inputDirectory, outputFileName, outputDirectory):
         csvWriter.writerows(new_metrics)
 
 
-inputDirectory = 'demo_files/'
-inputL = ['polya_pre_uni_6N_bridge_6node_proportion_1sim_ini3_demo.csv',
-          'polya_pre_uni_6N_bridge_ball_prop_demo_2sim_ini3_demo.csv']
-output = 'merge_demo_output.csv'
-outputDirectory = 'demo_files/'
+###############################
+if get_user_input('Input parameters in terminal? (y/n)') == 'y':
+    inputDirectory = get_user_input('Input Directory (will merge all files in given directory, '
+                                    'use / for backslash, end in /)')
+    inputL = os.listdir(inputDirectory)
+    outputDirectory = get_user_input('Output Directory (use / for backslash, end in /)')
+    output = get_user_input('Output file name').strip('.csv') + '.csv'
+else:
+    inputDirectory = 'demo_files/'
+    inputL = ['polya_pre_uni_6N_bridge_6node_proportion_1sim_ini3_demo.csv',
+              'polya_pre_uni_6N_bridge_ball_prop_demo_2sim_ini3_demo.csv']
+    output = 'merge_demo_output.csv'
+    outputDirectory = 'demo_files/'
+
 ave_metrics(inputL, inputDirectory, output, outputDirectory)
