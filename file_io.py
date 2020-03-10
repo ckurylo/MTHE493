@@ -3,6 +3,8 @@
 # Run main to create ini.txt File
 #########################
 
+import os
+
 def ini_to_ini_file(predraw_factor, max_n, m_mem, B, deltaR, fileName):
     myStr = 'Predraw_factor:\t' + str(predraw_factor) + '\n'
     myStr += 'Max_n:\t' + str(max_n) + '\n'
@@ -74,8 +76,7 @@ def main():
         except ValueError:
             print("\n--Please input a string--\n")
     print("\n--------------------------------------------------------\n")
-    ini_fileName.strip('.txt')
-    ini_fileName += '.txt'
+    ini_fileName = os.path.splitext(ini_fileName)[0] + '.txt'
     #########################################
     # Create ini file
     ini_to_ini_file(iniList[0], iniList[1], iniList[2], iniList[3], iniList[4], ini_fileName)

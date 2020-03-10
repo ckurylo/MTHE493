@@ -4,6 +4,8 @@ import numpy
 import csv
 import file_io as io
 import write_ball_proportions as wbp
+import os
+from pathlib import Path
 
 def get_user_input(prompt):
     print(prompt + ':', end='\t')
@@ -122,12 +124,12 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
 else:
     ini_fileName = get_user_input('ini file name/directory within ini_files/ folder (use / for backslash)')
-    ini_fileName = ini_fileName.strip('.txt') + '.txt'
+    ini_fileName = os.path.splitext(ini_fileName)[0] + '.txt'
     adjFile = 'adj_files/' + get_user_input('adj file name/directory within adj_files/ folder (use / for backslash)')
-    adjFile = adjFile.strip('.csv') + '.csv'
+    adjFile = os.path.splitext(adjFile)[0] + '.csv'
     ballFile = 'ball_proportion_files/' + get_user_input('ball prop file name/directory within ball_prop_files/ folder '
                                                          '(use / for backslash)')
-    ballFile = ballFile.strip('.csv') + '.csv'
+    ballFile = os.path.splitext(ballFile)[0] + '.csv'
 
     adj_matrix = importG(adjFile)
     num_nodes = len(adj_matrix[0])
@@ -156,10 +158,12 @@ else:
     num_sim = int(get_user_input('number of simulations to run (enter 1 to output ball proportions)'))
     if num_sim == 1:
         outputBallFile = get_user_input('output ball proportion file name')
-        outputBallFile = outputBallFile.strip('.csv') + '.csv'
+        outputBallFile = os.path.splitext(outputBallFile)[0] + '.csv'
 
     outputDirectory = get_user_input('output directory (use / for backslash, end in /)')
 
+
+Path(os.getcwd() + '/' + outputDirectory).mkdir(parents=True, exist_ok=True)
 
 # Read ini file
 iniList = io.ini_file_to_ini(ini_fileName)
@@ -174,13 +178,13 @@ name_choice = int(get_user_input('1: automatic file name - 2: automatic file nam
                                  '- 3: user input file name'))
 if name_choice == 1:
     outputFile = io.graph_to_string(num_sim, opt_method, num_nodes, adjFile[10:-8],
-                                    ini_fileName.strip('.txt'), ballFile.strip('.csv')[22:])
+                                    ini_fileName[:-4], ballFile[22:-4])
 elif name_choice == 2:
     outputFile = io.graph_to_string(num_sim, opt_method, num_nodes, adjFile[10:-8],
-                                    ini_fileName.strip('.txt'), ballFile.strip('.csv')[22:]).strip('.csv')
-    outputFile += '_' + get_user_input('suffix to append to output file name').strip('.csv') + '.csv'
+                                    ini_fileName[:-4], ballFile[22:-4])
+    outputFile += '_' + os.path.splitext(get_user_input('suffix to append to output file name'))[0] + '.csv'
 else:
-    outputFile = get_user_input('please enter output file name').strip('.csv') + '.csv'
+    outputFile = os.path.splitext(get_user_input('please enter output file name'))[0] + '.csv'
 
 
 polya_sim_test(adjFile, ballFile, outputBallFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, outputFile,
