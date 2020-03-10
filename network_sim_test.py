@@ -37,6 +37,7 @@ def get_balls(ballName):
     return balls
 
 
+
 def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_mem, num_nodes, outputMetricsFile,
                    outputDirectory, opt_method, tenacity):
 
@@ -55,7 +56,7 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
         for i in range(num_sim):
             print('\nsimulation:')
             print('\r'+str(i+1), end='')
-            metrics, sim_time = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls,
+            metrics, sim_time = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, Tlist,
                                                            opt_method, tenacity)[0:2]
             total_time += sim_time
             for j in range(max_n):
@@ -70,7 +71,8 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
     #######
     #  single simulation case for the purpose of saving final ball proportions
     else:
-        metrics, sim_time, G = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, opt_method, tenacity)
+        metrics, sim_time, G = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, Tlist,
+                                                        opt_method, tenacity)
         metrics[0].append(sim_time)
         with open(outputDirectory + outputMetricsFile, "w+") as my_csv:
             csvWriter = csv.writer(my_csv, delimiter=',')
@@ -98,7 +100,10 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     ### Network Conditions Parameters
     num_sim = 2
     adjFile = 'adj_files/6N_bridge_adj.csv'
-    ballFile = 'ball_proportion_files/ball_prop_demo.csv'
+    ballFile = 'ball_proportion_files/ball_prop_demo/6N_uni_proportions.csv'
+    ballFile = 'ball_proportion_files/ball_prop_demo/ball_prop_demo.csv'
+
+
     outputDirectory = 'demo_files/'
     #######
     outputBallFile = 'ball_prop_demo.csv'  # fileName for creating ball proportions from running a disease
@@ -108,6 +113,13 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     # [3, i, k] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
     # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+
+    ### housekeeping
+    adj_matrix = importG(adjFile)
+    num_nodes = len(adj_matrix[0])
+
+    #Tlist = num_nodes * [10]
+    Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
 else:
     ini_fileName = get_user_input('ini file name/directory within ini_files/ folder (use / for backslash)')
     ini_fileName = ini_fileName.strip('.txt') + '.txt'
@@ -116,6 +128,15 @@ else:
     ballFile = 'ball_proportion_files/' + get_user_input('ball prop file name/directory within ball_prop_files/ folder '
                                                          '(use / for backslash)')
     ballFile = ballFile.strip('.csv') + '.csv'
+
+    adj_matrix = importG(adjFile)
+    num_nodes = len(adj_matrix[0])
+
+    if get_user_input('Same amount of total balls for each urn? (y/n)') == 'y':
+        Tlist = num_nodes*[get_user_input('Total balls per urn')]
+    else:
+        print('Then taking number ball proportions ratios to be exact number of balls')
+        Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
     opt_method = []
     print('Optimization Method')
     pp = int(get_user_input('0: pre-draw optimization - 1: post-draw optimization'))
@@ -139,9 +160,7 @@ else:
 
     outputDirectory = get_user_input('output directory (use / for backslash, end in /)')
 
-### housekeeping
-adj_matrix = importG(adjFile)
-num_nodes = len(adj_matrix[0])
+
 # Read ini file
 iniList = io.ini_file_to_ini(ini_fileName)
 # predraw_factor = iniList[0]

@@ -82,7 +82,7 @@ num_sim = 50
 adjFile = '10N_barabasi_adj.csv'
 outputFilePre = 'polya_pprand_pre_10N_50sim.csv'
 outputFilePost = 'polya_pprand_post_10N_50sim.csv'
-ballFile = '10node_proportions.csv'
+ballFile = '10N_uni_proportions.csv'
 ########
 budget = 30
 deltaR = 2

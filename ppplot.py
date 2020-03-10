@@ -58,7 +58,7 @@ def main():
         'polya_ppuni_post_10N_50sim.csv','polya_pprand_post_10N_50sim.csv']
     max_n = 200
     axis = [0, max_n, 0, 1]
-    p = getP('10node_proportions.csv')
+    p = getP('10N_uni_proportions.csv')
     #legend = ['SIS degree centrality', 'Polya degree centrality']
     legend = ['Degree Centrality', 'Betweenness Centrality', 'Closeness Centrality', 'Uniform', 'Random']
     plot_In(inputPre, inputPost, axis, legend, max_n, p)

@@ -328,7 +328,7 @@ def main():
 
     opt_method = [3, 4, 0]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('6node_proportions.csv'), opt_method, tenacity_factor)
+    network_simulation(adjFile, delta, M, max_n, get_balls('6N_uni_proportions.csv'), opt_method, tenacity_factor)
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
