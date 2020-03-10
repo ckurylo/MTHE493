@@ -105,12 +105,13 @@ class SuperUrn(Urn):
         self.Sm.insert(0, nominator/denominator)  # update Sm
 
 
-def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns at every node
+def createPolyaNetwork(adjFile, node_balls, Tlist):  # generates graph and creates urns at every node
     G = importGraph(adjFile)
 
     for i in range(len(list(G.nodes))):  # set urn at every node
-        B = node_balls[i][0]
-        R = node_balls[i][1]
+        dem = sum(node_balls[i])
+        B = round(Tlist[i] * (node_balls[i][0]/dem))
+        R = round(Tlist[i] * (node_balls[i][1]/dem))
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
@@ -203,11 +204,11 @@ def sisParallel(adjFile, N, delta, Pi, avgInf, n):
 
 # Runs a single simulation of network contagion given input arguments
 # Returns: disease_metrics - [ In, Sn, Un] , a copy of the network object, and total simulation time
-def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacity, SIS=0):
+def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, tenacity, SIS=0):
     defConstants(M, delta[0], delta[1], tenacity)
     start_time = time.time()
 
-    polya_network = createPolyaNetwork(adjFile, node_balls)  # create network of urns
+    polya_network = createPolyaNetwork(adjFile, node_balls, Tlist)  # create network of urns
     #infection_data = {}
     disease_metrics = []
     N = len(list(polya_network.nodes))
@@ -335,6 +336,8 @@ def main():
     deltaR = 2
     delta = [budget, deltaR]
     max_n = 50
+
+    Tlist = 100* [10]
     tenacity_factor = 1  # weight of node's own Urn in Super Urn
     adjFile = '100N_barabasi_adj.csv'
     adjFile = 'madagascar_weighted_adj.csv'
@@ -347,14 +350,14 @@ def main():
 
     #opt_method = [3, 4, 0]
     #opt_method = [2]
-    #network_simulation(adjFile, delta, M, max_n, get_balls('6node_proportions.csv'), opt_method, tenacity_factor)
+    #network_simulation(adjFile, delta, M, max_n, get_balls('6N_uni_proportions.csv'), opt_method, tenacity_factor)
 
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
     # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
-    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor, SIS=1)
+    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10N_uni_proportions.csv'), opt_method, tenacity_factor, SIS=1)
     print("Polya: \n")
     print(polya)
     print("\n SIS: \n")
