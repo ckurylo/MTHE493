@@ -135,7 +135,7 @@ else:
     num_nodes = len(adj_matrix[0])
 
     if get_user_input('Same amount of total balls for each urn? (y/n)') == 'y':
-        Tlist = num_nodes*[get_user_input('Total balls per urn')]
+        Tlist = num_nodes*[int(get_user_input('Total balls per urn'))]
     else:
         print('Then taking number ball proportions ratios to be exact number of balls')
         Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
