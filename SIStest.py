@@ -73,7 +73,7 @@ num_sim = 50
 # outputFile = 'weight_demo_metrics.csv'
 # ballFile = 'ball_proportions_100_nodes.csv'
 
-adjFile = '10node.csv'
+adjFile = '10N_barabasi_adj.csv'
 outputFilePolya = 'polya_heur_bet_even_B30_10N_50sim.csv'
 outputFileSIS = 'SIS_heur_bet_even_B30_10N_50sim.csv'
 ballFile = '10node_proportions_even.csv'

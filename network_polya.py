@@ -2,6 +2,7 @@ import numpy
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+import time
 
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
@@ -36,18 +37,6 @@ class Urn:
         self.Zn = MARKOV_MEMORY*[0]   # stoch process indicator for black or red draw at time n, only need M previous draw info
         self.Um = [R/(R+B), 0]  # red ball proportion in the urn, only ever need the value before and after each draw
         self.n = 0  # time
-
-    # THIS METHOD FROM SINGLE URN SIMULATIONS, DON'T USE
-    # def timeStep(self, delta):  # execute next draw in process
-    #     self.n += 1  # increment time
-    #     self.nextZ()
-    #     self.nextDelta(delta)
-    #     self.nextU()
-    # THIS METHOD FROM SINGLE URN SIMULATIONS, DON'T USE
-    # def nextZ(self):
-    #     Z = numpy.random.choice([0, 1], p=[(1-self.Um[0]), self.Um[0]])  # draw red or black ball
-    #     self.Zn.pop()  # get rid of (n-M-1)th draw (since finite M memory)
-    #     self.Zn.insert(0, Z)  # insert nth draw info
 
     def nextDelta(self, delta):  # updates the list of last M delta, based on last draw
         self.delta.pop()
@@ -116,17 +105,19 @@ class SuperUrn(Urn):
         self.Sm.insert(0, nominator/denominator)  # update Sm
 
 
-def createPolyaNetwork(adjFile, node_balls):  # generates graph and creates urns at every node
+def createPolyaNetwork(adjFile, node_balls, Tlist):  # generates graph and creates urns at every node
     G = importGraph(adjFile)
 
     for i in range(len(list(G.nodes))):  # set urn at every node
-        B = node_balls[i][0]
-        R = node_balls[i][1]
+        dem = sum(node_balls[i])
+        B = round(Tlist[i] * (node_balls[i][0]/dem))
+        R = round(Tlist[i] * (node_balls[i][1]/dem))
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
-    nx.draw(G, pos = nx.planar_layout(G))
-    plt.show()
+
+    #nx.draw(G, pos = nx.planar_layout(G))
+    #plt.show()
     return G
 
 
@@ -164,8 +155,8 @@ def networkTimeStep(G, opt_method):  # increment time and proceed to next step i
     return state_vector, delta
 
 
-def diseaseMetrics(G, state_vector):
-    N = len(list(G.nodes))
+def diseaseMetrics(G, state_vector, deltaB):
+    N = G.number_of_nodes()
     # average of all red balls pulled  = infection rate
     state_sum = sum(row[0] for row in state_vector)
     I_n = (1/N)*state_sum
@@ -180,10 +171,13 @@ def diseaseMetrics(G, state_vector):
     rho_tot = 0
     for i in G.nodes:
         rho_tot = rho_tot + G.nodes[i]['superUrn'].Um[0]
-
     # average of proportion of infection across network
     U_n = (1/N)*rho_tot
-    metrics = [I_n, S_n, U_n]
+
+    W_n = sum(numpy.dot(deltaB, state_vector))  # vaccine waste for time n
+
+    metrics = [I_n, S_n, U_n, W_n]
+
     return metrics
 
 
@@ -201,40 +195,50 @@ def printNetwork(G, t,v,m):  # print network attributes
     print("Avg Network Infection: {:.2%}".format(m[1]), end='\n')
     print("Network Susceptibility: {:.2%}".format(m[2]), end='\n')
 
+
 def sisParallel(adjFile, N, delta, Pi, avgInf, n):
     [deltaB, deltaR] = delta
     PiSIS, avgInfSIS = sis.SISModelStep(adjFile, N, deltaB, deltaR, Pi, avgInf, n)
     return PiSIS, avgInfSIS
 
-def network_simulation(adjFile, delta, M, max_n, node_balls, opt_method, tenacity, SIS=0):
-    defConstants(M, delta[0], delta[1], tenacity)
 
-    polya_network = createPolyaNetwork(adjFile, node_balls)  # create network of urns
+# Runs a single simulation of network contagion given input arguments
+# Returns: disease_metrics - [ In, Sn, Un] , a copy of the network object, and total simulation time
+def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, tenacity, SIS=0):
+    defConstants(M, delta[0], delta[1], tenacity)
+    start_time = time.time()
+
+    polya_network = createPolyaNetwork(adjFile, node_balls, Tlist)  # create network of urns
     #infection_data = {}
     disease_metrics = []
     N = len(list(polya_network.nodes))
     if(SIS):
         diseaseSISresult = []
         PiSIS, avgInfSIS = sis.SISInitilize(max_n, N, node_balls)
+
     print('\npolya time:')
     for n in range(max_n):  # run simulation for max_n steps
-        print('\r'+str(n+1), end='')
+        print('\r'+str(n+1), end='')  # print time
+
         v, delta = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
-        m = diseaseMetrics(polya_network, v)
+        m = diseaseMetrics(polya_network, v, delta[0])
         disease_metrics.append(m)
+
         if(SIS):
             PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
             diseaseSISresult = avgInfSIS
+
         #infection_data[n] = {}
         #for node in polya_network.nodes:
             #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
         # printNetwork(polya_network, n,v,m)  # print network attributes
     #update_graph(polya_network, infection_data)
+
     if(SIS):
         diseaseSISresult.pop()
         return disease_metrics, diseaseSISresult
     else:
-        return disease_metrics
+        return disease_metrics, (time.time() - start_time), polya_network
 
 #    colour = recolourGraph
 #   printGraph(polya_network, colour)  # print graph for reference
@@ -267,36 +271,29 @@ def update_graph(G, data):
     new.save('animation_1.html')
     print('i made it')
 
-#def printGraph(G, c):  # prints a plot of the network for reference
-
-#
-# def polya_simulation(R, B, delta, M, max_n):
-#
-#     polyaUrn = Urn(1, R, B, M)
-#     print("-----------------")
-#     for n in range(max_n):  # run simulation for max_n total draws
-#         polyaUrn.timeStep(delta)
-#         polyaUrn.print_current_n()
 
 def centralityCalculation(G, cent_mes):
 
     deg_centrality = nx.degree_centrality(G)
     deg_cent = [k for k in deg_centrality.values()]
+
     close_centrality = nx.closeness_centrality(G)
-    perc_cent = percolation(G)
     close_cent = [k for k in close_centrality.values()]
-    #print(deg_centrality)
+
     bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
     bet_cent = [k for k in bet_centrality.values()]
-    #print(deg_centrality)
+
+    perc_cent = percolation(G)
+
     if cent_mes == 1:
         return deg_cent
     elif cent_mes == 2:
         return close_cent
     elif cent_mes == 3:
-        return perc_cent
-    else:
         return bet_cent
+    else:
+        return perc_cent
+
 
 def percolation(G):
     balldict = {}
@@ -308,17 +305,17 @@ def percolation(G):
 
     return centrality
 
+
 def numNeighbors(G):
     neighbors = [len(list(G.neighbors(n))) for n in G]
     return neighbors
+
 
 def importGraph(adjFile):
     #bigG = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
     data = numpy.array(pd.read_csv(adjFile, header=None))
     bigG = nx.from_numpy_matrix(data)
     return bigG
-#######################################
-# PARAMETER INPUT
 
 
 def get_balls(ballName):
@@ -326,46 +323,47 @@ def get_balls(ballName):
     balls = []
     for i in range(len(g)):
         BR = g[i][0].split('\t')
-        BR[0] = int(BR[0])
-        BR[1] = int(BR[1])
+        BR[0] = int(float(BR[0]))
+        BR[1] = int(float(BR[1]))
         balls.append(BR)
 
     return balls
 
 
 def main():
-
     M = 5
     budget = 25
     deltaR = 2
     delta = [budget, deltaR]
     max_n = 50
+
+    Tlist = 100* [10]
     tenacity_factor = 1  # weight of node's own Urn in Super Urn
-    adjFile = '100_node_adj.csv'
-    adjFile = 'madagascar.csv'
+    adjFile = '100N_barabasi_adj.csv'
+    adjFile = 'madagascar_weighted_adj.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
     opt_method = [1, 3, 1]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_96_nodes.csv'), opt_method, tenacity_factor)
-  '''
-    opt_method = [3, 4, 0]
+    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_96_nodes.csv'), opt_method,
+                       tenacity_factor)
+
+    #opt_method = [3, 4, 0]
     #opt_method = [2]
-    #network_simulation(adjFile, delta, M, max_n, get_balls('6node_proportions.csv'), opt_method, tenacity_factor)
-   '''
+    #network_simulation(adjFile, delta, M, max_n, get_balls('6N_uni_proportions.csv'), opt_method, tenacity_factor)
+
     # opt_method: [1] for uniform vaccine deployment, [2] for random
-    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
+    # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
-            # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+    # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
-
-    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10node_proportions.csv'), opt_method, tenacity_factor, SIS=1)
+    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10N_uni_proportions.csv'), opt_method, tenacity_factor, SIS=1)
     print("Polya: \n")
     print(polya)
     print("\n SIS: \n")
     print(SIS)
     """
-    G, cent = centralityCalculation('100_node_adj.csv')
+    G, cent = centralityCalculation('100N_barabasi_adj.csv')
     neigh = numNeighbors(G)
     deltaB1 = opt.evenDistribution(100, 800)
     print(deltaB1)
@@ -375,3 +373,4 @@ def main():
     """
 
 if __name__=='__main__':
+    main()

@@ -7,7 +7,7 @@ def csv_to_list(fileName):
     print(g)
 
 
-#csv_to_list('100_node_adj.csv')
+#csv_to_list('100N_barabasi_adj.csv')
 
 
 def get_ball_bounds(fileName, outputFile):
