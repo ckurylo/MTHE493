@@ -149,7 +149,7 @@ else:
         k = int(get_user_input('1: degree cent - 2: closeness cent - 3: betweenness cent - 4: percolation cent'))
         opt_method.extend([k, pp])
     elif opt == 4:
-        k = get_user_input('number of iterations of gradient descent (should be 3 for 10 node and under)')
+        k = int(get_user_input('number of iterations of gradient descent (should be 3 for 10 node and under)'))
         opt_method.extend([k, pp])
     else:
         opt_method.extend([0, pp])
