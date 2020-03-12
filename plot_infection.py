@@ -231,7 +231,7 @@ def main():
                 except FileNotFoundError:
                     print('folder not found')
         else:  # hard code in
-            ballPropL = ['10N_uni_proportions.csv']
+            ballPropL = ['6N_uni_proportions.csv']
 
         for ballFile in ballPropL:
             try:
