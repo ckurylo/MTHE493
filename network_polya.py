@@ -141,7 +141,7 @@ def getDelta(G, deployment_method):
 
 def networkTimeStep(G, opt_method):  # increment time and proceed to next step in network draw process
     state_vector = []
-    if opt_method[2] == 0:  # get vaccine deployment if pre-draw optimization
+    if opt_method[2] == 0 or opt_method[2] == 2:  # get vaccine deployment if pre-draw optimization
         delta = getDelta(G, opt_method)
     for i in G.nodes:
         G.nodes[i]['superUrn'].drawBall()

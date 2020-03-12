@@ -114,7 +114,7 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i, k] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
-    # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+    # k = 0 for pre-draw optimization, k = 1 for post-draw optimization, k = 2 so balls are allocated to every node
 
     ### housekeeping
     adj_matrix = importG(adjFile)
@@ -141,7 +141,7 @@ else:
         Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
     opt_method = []
     print('Optimization Method')
-    pp = int(get_user_input('0: pre-draw optimization - 1: post-draw optimization'))
+    pp = int(get_user_input('0: pre-draw optimization - 1: post-draw optimization - 2: allocate to all nodes'))
     opt = int(get_user_input('1: uniform deployment - 2: random deployment - 3: heuristic - 4: gradient descent'))
     opt_method.append(opt)
     if opt == 3:
