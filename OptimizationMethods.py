@@ -4,51 +4,51 @@ import sympy as sym
 import csv
 
 
-
-def evenDistribution(n, b, p_p=0, G=0):
-    if(p_p==1):
+def evenDistribution(n, b, p_p, G):
+    if p_p == 1:
         drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
         count = sum(drawn)
-        if count==0:
+        if count == 0:
             return [0]*n
         dist = math.floor(b/count)
-        deltaB = [dist if drawn[i]==1 else 0 for i in range(n)]
+        deltaB = [dist if drawn[i] == 1 else 0 for i in range(n)]
     else:
         deltaB = [math.floor(b/n) for i in range(n)]
     return deltaB
 
-def randomDistribution(n, b, p_p=0, G=0):
-    if(p_p==1):
+
+def randomDistribution(n, b, p_p, G):
+    if p_p == 1:
         drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
         count = sum(drawn)
-        if count==0:
+        if count == 0:
             return [0]*n
-        values = [0.0, b] + list(np.random.uniform(low=0.0,high=b,size=count-1))
+        values = [0.0, b] + list(np.random.uniform(low=0.0, high=b, size=count-1))
         values.sort()
         dist = [math.floor(values[i+1] - values[i]) for i in range(count)]
         deltaB = [dist.pop(0) if drawn[i]==1 else 0 for i in range(n)]
     else:
-        values = [0.0, b] + list(np.random.uniform(low=0.0,high=b,size=n-1))
+        values = [0.0, b] + list(np.random.uniform(low=0.0, high=b, size=n-1))
         values.sort()
         deltaB = [math.floor(values[i+1] - values[i]) for i in range(n)]
     return deltaB
 
 
-def heuristic(n, b, N, C, S, p_p=0, G=0):
-    if(p_p==1):
+def heuristic(n, b, N, C, S, p_p, G):
+    if p_p == 1:
         drawn = [G.nodes[i]['superUrn'].Zn[0] for i in range(n)]
         count = sum(drawn)
         deltaB = [0]*n
-        if(count==0):
+        if count == 0:
             return deltaB
         totalInfectionCentralityRatio = 0
         for i in range(n):
-            if (drawn[i]==1):
+            if drawn[i] == 1:
                 totalInfectionCentralityRatio += N[i]*C[i]*S[i]
-        if(totalInfectionCentralityRatio==0):
+        if totalInfectionCentralityRatio == 0:
             return deltaB
         for i in range(n):
-            if (drawn[i]==1):
+            if drawn[i] == 1:
                 deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
     else:
         deltaB = [0]*n
@@ -66,21 +66,37 @@ def Sn_function(G, deltaR, p_p):
     d = [0 for i in range(N)]
     sigma = [0 for i in range(N)]
     xN = sym.symbols('x0:%d'%(N))  # N-tuple of vaccines deployed
-    for i in G.nodes:
-        node = G.nodes[i]['superUrn']
 
-        # sum of all the red balls in a given super urn. note the use of p_p (pre_post). slicing of delta
-        # depending on whether the optimization is pre-draw or post-draw (0 for pre, 1 for post)
-        # so time indices of delta and Zn (which may be 1 time step ahead) are lined up
-        s_delta = 1-p_p
-        e_delta = len(node.delta)-p_p
-        c[i] = node.super_R + sum([np.dot(j.delta[s_delta:e_delta], j.Zn[1:]) for j in node.Ni_list]) + \
-               sum([deltaR*j.Zn[0] for j in node.Ni_list])
+    if p_p == 2:
+        for i in G.nodes:
+            node = G.nodes[i]['superUrn']
 
-        d[i] = node.super_B + node.super_R + sum(node.delta[s_delta:e_delta]) + \
-               sum([deltaR * j.Zn[0] for j in node.Ni_list])
+            # sum of all the red balls in a given super urn. note the use of p_p (pre_post). slicing of delta
+            # depending on whether the optimization is pre-draw or post-draw (0 for pre, 1 for post)
+            # so time indices of delta and Zn (which may be 1 time step ahead) are lined up
+            s_delta = 1 - p_p
+            e_delta = len(node.delta) - p_p
+            c[i] = node.super_R + sum([np.dot(j.delta[:-1], j.Zn[:-1]) for j in node.Ni_list])
 
-        sigma[i] = sum([xN[j.key] * (1 - j.Zn[0]) for j in node.Ni_list])
+            d[i] = node.super_B + node.super_R + sum(node.delta[:-1])
+
+            sigma[i] = sum([xN[j.key] for j in node.Ni_list])
+    else:
+        for i in G.nodes:
+            node = G.nodes[i]['superUrn']
+
+            # sum of all the red balls in a given super urn. note the use of p_p (pre_post). slicing of delta
+            # depending on whether the optimization is pre-draw or post-draw (0 for pre, 1 for post)
+            # so time indices of delta and Zn (which may be 1 time step ahead) are lined up
+            s_delta = 1-p_p
+            e_delta = len(node.delta)-p_p
+            c[i] = node.super_R + sum([np.dot(j.delta[s_delta:e_delta], j.Zn[1:]) for j in node.Ni_list]) + \
+                   sum([deltaR*j.Zn[0] for j in node.Ni_list])
+
+            d[i] = node.super_B + node.super_R + sum(node.delta[s_delta:e_delta]) + \
+                   sum([deltaR * j.Zn[0] for j in node.Ni_list])
+
+            sigma[i] = sum([xN[j.key] * (1 - j.Zn[0]) for j in node.Ni_list])
 
     # y = str(sum([c[i]/(d[i] + sigma[i]) for i in range(N)])/N)
     # with open('Sn_function_10N.csv', "w+") as my_csv:
