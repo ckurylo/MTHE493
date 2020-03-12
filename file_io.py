@@ -29,9 +29,10 @@ def graph_to_string(num_sim, opt_method, num_nodes, graph_type, ini, ballProp):
     myStr = 'polya_'
     if opt_method[2] == 0:
         myStr += 'pre_'
-    else:
+    elif opt_method[2] == 1:
         myStr += 'post_'
-
+    else:
+        myStr += 'optimist_'
     if opt_method[0] == 1:
         myStr += 'uni_'
     elif opt_method[0] == 2:
