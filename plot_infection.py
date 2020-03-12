@@ -60,7 +60,7 @@ def dilation_input():
         y2 = int(get_user_input('y axis upper bound'))
         axis = [x1, x2, y1, y2]
     else:
-        axis = [0, 10, 0, 1]  # hard code in
+        axis = [0, 200, 0, 1]  # hard code in
 
     legend = []
     if get_user_input('Input legend? (y/n)') == 'y':
@@ -175,7 +175,8 @@ def main():
             except FileNotFoundError:
                 print('folder not found')
     else:
-        inputL = ['democrat.csv']
+        inputDirectory = 'data/merged_output/prepost/first_comparison/'
+        inputL = os.listdir(inputDirectory)
 
     case = 'a'
     if get_user_input('Plot SIS too? (y/n)') == 'y':
@@ -207,13 +208,13 @@ def main():
         y1 = int(get_user_input('y axis lower bound'))
         y2 = int(get_user_input('y axis upper bound'))
         axis = [x1, x2, y1, y2]
-    else: axis = [0, 10, 0, 1]  # hard code in
+    else: axis = [0, 100, 0, 1]  # hard code in
 
     legend = []
     if get_user_input('Input legend? (y/n)') == 'y':
         for i in range(len(inputL)): legend.append(get_user_input('entry ' + str(i+1)))
     else: # hard code in
-        legend = []
+        legend = ['bet cent', 'close cent', 'deg cent', 'grad', 'perc cent', 'random', 'uni']
 
     p = 0
     plot_p = get_user_input('Plot average initial infection? (y/n)')
