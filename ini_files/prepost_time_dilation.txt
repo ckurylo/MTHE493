@@ -1,0 +1,5 @@
+Predraw_factor:	10
+Max_n:	1000
+Markov Memory:	100
+Budget:	40
+deltaR:	3

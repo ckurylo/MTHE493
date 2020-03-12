@@ -45,12 +45,11 @@ if get_user_input('Input parameters in terminal? (y/n)') == 'y':
                                     'use / for backslash, end in /)')
     inputL = os.listdir(inputDirectory)
     outputDirectory = get_user_input('Output Directory (use / for backslash, end in /)')
-    output = get_user_input('Output file name').strip('.csv') + '.csv'
+    output = os.path.splitext(get_user_input('Output file name'))[0] + '.csv'
 else:
-    inputDirectory = 'demo_files/'
-    inputL = ['polya_pre_uni_6N_bridge_6node_proportion_1sim_ini3_demo.csv',
-              'polya_pre_uni_6N_bridge_ball_prop_demo_2sim_ini3_demo.csv']
-    output = 'merge_demo_output.csv'
-    outputDirectory = 'demo_files/'
+    inputDirectory = 'data/to_merge/prepost/first_comparison/post/'
+    inputL = os.listdir(inputDirectory)
+    output = 'polya_post_grad_10N_barabasi_uni_proportions_200sim_standard_ini.csv'
+    outputDirectory = 'data/merged_output/prepost/first_comparison/'
 
 ave_metrics(inputL, inputDirectory, output, outputDirectory)
