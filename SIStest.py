@@ -95,7 +95,7 @@ tenacity = 1  # weight of node's own Urn in Super Urn
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
-
+'''
 # HEURISTICS FOR 6Nodes 
 topology = ['bridge', 'cycle', 'star', 'stick']
 initialDist = ['Conc1', 'Conc3', 'uni']
@@ -121,8 +121,9 @@ for top in topology:
         print("FINISHED "+ dist)
 
     print("FINISHED" + top)
-
 '''
+
+
 budget = 20
 # HEURISTICS FOR 10 NODE DENDRIMER
 initialDist = ['Conc1', 'Conc3', 'uni']
@@ -143,7 +144,7 @@ for dist in initialDist:
 
         polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
             outputFilePolya, outputFileSIS, opt_method, tenacity)
-'''
+
 
 
 # budget as nodes*deltaR = 2----*12
