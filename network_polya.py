@@ -141,7 +141,7 @@ def getDelta(G, deployment_method):
 
 def networkTimeStep(G, opt_method):  # increment time and proceed to next step in network draw process
     state_vector = []
-    if opt_method[2] == 0 or opt_method[2] == 2:  # get vaccine deployment if pre-draw optimization
+    if opt_method[2] == 0 or opt_method[2] == 2 :  # get vaccine deployment if pre-draw optimization
         delta = getDelta(G, opt_method)
     for i in G.nodes:
         G.nodes[i]['superUrn'].drawBall()
@@ -174,7 +174,8 @@ def diseaseMetrics(G, state_vector, deltaB):
     # average of proportion of infection across network
     U_n = (1/N)*rho_tot
 
-    W_n = sum(numpy.dot(deltaB, state_vector))  # vaccine waste for time n
+    state_vector = [state_vector[i][0] for i in range(len(state_vector))]
+    W_n = numpy.dot(deltaB, state_vector)  # vaccine waste for time n
 
     metrics = [I_n, S_n, U_n, W_n]
 
