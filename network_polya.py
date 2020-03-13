@@ -236,7 +236,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, 
 
     if(SIS):
         diseaseSISresult.pop()
-        return disease_metrics, diseaseSISresult
+        return disease_metrics, (time.time() - start_time), polya_network, diseaseSISresult
     else:
         return disease_metrics, (time.time() - start_time), polya_network
 
