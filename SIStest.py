@@ -33,9 +33,8 @@ def get_balls(ballName):
 
 def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, Tlist, outputFilePolya, outputFileSIS, opt_method, tenacity):
 
-    sum_metrics = [3*[0] for _ in range(max_n)]
+    sum_metrics = [4*[0] for _ in range(max_n)]
     sum_SIS = [0 for i in range(max_n)]
-    #node_balls = generateBallProportions(delta, num_nodes)
     node_balls = get_balls(ballFile)
     ave_p = 0
     for i in range(num_nodes):
@@ -43,17 +42,21 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     ave_p /= num_nodes
     print(ave_p)
 
+    total_time = 0
     for i in range(num_sim):
         print('simulation:')
         print('\r'+str(i+1), end='')
-        metrics, SIS = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, Tlist, opt_method, tenacity, SIS=1)
+        metrics, sim_time, _, SIS = polya.network_simulation(adjFile, delta, m_mem, max_n, node_balls, 
+            Tlist, opt_method, tenacity, SIS=1)
+        total_time += sim_time
         for j in range(max_n):
-            for k in range(3):
+            for k in range(4):
                 sum_metrics[j][k] = sum_metrics[j][k] + metrics[j][k]
             sum_SIS[j] = sum_SIS[j] + SIS[j]
     for i in range(max_n):
-        for j in range(3): sum_metrics[i][j] /= num_sim
+        for j in range(4): sum_metrics[i][j] /= num_sim
         sum_SIS[i]= [sum_SIS[i]/ num_sim]
+    sum_metrics[0].append(total_time)
 
     with open(outputFilePolya, "w+") as my_csv:
         csvWriter = csv.writer(my_csv, delimiter=',')
@@ -68,7 +71,7 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
 # PARAMETER INPUT
 max_n = 200
 m_mem = 5
-num_sim = 100
+num_sim = 200
 '''
 adjFile = '10N_barabasi_adj.csv'
 outputFilePolya = 'polya_heur_bet_even_B30_10N_50sim.csv'
@@ -93,6 +96,7 @@ tenacity = 1  # weight of node's own Urn in Super Urn
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
 
+# HEURISTICS FOR 6Nodes 
 topology = ['bridge', 'cycle', 'star', 'stick']
 initialDist = ['Conc1', 'Conc3', 'uni']
 heuristic_methods = ['deg', 'close', 'bet', 'perc']
@@ -118,6 +122,28 @@ for top in topology:
 
     print("FINISHED" + top)
 
+'''
+budget = 20
+# HEURISTICS FOR 10 NODE DENDRIMER
+initialDist = ['Conc1', 'Conc3', 'uni']
+heuristic_methods = ['deg', 'close', 'bet', 'perc']
+
+for dist in initialDist:
+
+    adjFile = 'adj_files/10N_dendrimer_adj.csv'
+    ballFile = 'ball_proportion_files/10N_{dist}_proportions.csv'.format(dist=dist)
+    adj_matrix = importG(adjFile)
+    num_nodes = len(adj_matrix[0])
+    Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
+    for i in range(4):
+        method = heuristic_methods[i]
+        opt_method = [3,i+1,0]
+        outputFilePolya = 'SIS_Polya_Testing/10Nodes/polya_pre_heur_{opt}_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist, opt=method)
+        outputFileSIS = 'SIS_Polya_Testing/10Nodes/SIS_pre_heur_{opt}_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist, opt=method)
+
+        polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+            outputFilePolya, outputFileSIS, opt_method, tenacity)
+'''
 
 
 # budget as nodes*deltaR = 2----*12

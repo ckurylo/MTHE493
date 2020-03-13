@@ -62,7 +62,7 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
                                                            opt_method, tenacity)[0:2]
             total_time += sim_time
             for j in range(max_n):
-                for k in range(3):
+                for k in range(4):
                     sum_metrics[j][k] = sum_metrics[j][k] + metrics[j][k]
         for i in range(max_n):
             for j in range(4): sum_metrics[i][j] /= num_sim
