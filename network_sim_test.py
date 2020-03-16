@@ -87,7 +87,7 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
 
 if get_user_input('Input parameters manually? (y/n)') == 'n':
     ### Initial Conditions File
-    ini_fileName = 'ini3_demo.txt'
+    ini_fileName = 'topology_test_6N.txt'
     # predraw_factor = 1
     # max_n = predraw_factor * 200
     # m_mem = predraw_factor * 10
@@ -100,17 +100,14 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     # io.ini_to_ini_file(predraw_factor, max_n, m_mem, budget, deltaR, ini_fileName)
     ##########################################
     ### Network Conditions Parameters
-    num_sim = 2
+    num_sim = 100
     adjFile = 'adj_files/6N_bridge_adj.csv'
-    ballFile = 'ball_proportion_files/ball_prop_demo/6N_uni_proportions.csv'
-    ballFile = 'ball_proportion_files/ball_prop_demo/ball_prop_demo.csv'
-
-
-    outputDirectory = 'demo_files/'
+    ballFile = 'ball_proportion_files/6N_uni_proportions.csv'
+    outputDirectory = 'data/to_merge/topology/close/bridge/'
     #######
     outputBallFile = 'ball_prop_demo.csv'  # fileName for creating ball proportions from running a disease
     # set budget to 0 in this case, max_n to the time at which we want to pull out ball proportions, and num_sim to 1
-    opt_method = [1, 1, 0]
+    opt_method = [3, 1, 0]
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i, k] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
