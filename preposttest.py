@@ -77,7 +77,7 @@ m_mem = 10
 num_sim = 50
 # adjFile = '100_node_adj_2.csv'
 # outputFile = 'weight_demo_metrics.csv'
-# ballFile = 'ball_proportions_100_nodes.csv'
+# ballFile = '100N_uni_proportions.csv'
 
 adjFile = '10N_barabasi_adj.csv'
 outputFilePre = 'polya_pprand_pre_10N_50sim.csv'

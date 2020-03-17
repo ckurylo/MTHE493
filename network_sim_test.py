@@ -103,11 +103,11 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     num_sim = 100
     adjFile = 'adj_files/6N_bridge_adj.csv'
     ballFile = 'ball_proportion_files/6N_uni_proportions.csv'
-    outputDirectory = 'data/to_merge/topology/close/bridge/'
+    outputDirectory = 'data/to_merge/topology/perc/bridge/'
     #######
     outputBallFile = 'ball_prop_demo.csv'  # fileName for creating ball proportions from running a disease
     # set budget to 0 in this case, max_n to the time at which we want to pull out ball proportions, and num_sim to 1
-    opt_method = [3, 1, 0]
+    opt_method = [3, 4, 0]
     # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i, k] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
