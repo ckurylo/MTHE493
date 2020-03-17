@@ -63,7 +63,7 @@ def SISModelStep(adjFile, N, deltaB, deltaR, Pi, avgInfSIS, t):
 
 def main():
     data = pd.read_csv('100N_barabasi_adj.csv', header=None)
-    prop = list(csv.reader(open('ball_proportions_100_nodes.csv'), delimiter='\t'))
+    prop = list(csv.reader(open('100N_uni_proportions.csv'), delimiter='\t'))
     N=100
 
 if __name__=='__main__':

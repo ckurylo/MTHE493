@@ -45,4 +45,4 @@ def write_balls_from_G(G, fileName):
         csvWriter.writerows(ball_proportions)
 
 
-#get_ball_bounds('100N_barabasi_adj.csv', 'ball_proportions_100_nodes.csv')
+#get_ball_bounds('100N_barabasi_adj.csv', '100N_uni_proportions.csv')
