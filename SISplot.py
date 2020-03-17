@@ -25,14 +25,14 @@ def getP(ballFile):
 
 def plot_In(inputSIS, inputPolya, axis, legend, max_n, title):
 
-    for i in range(len(inputSIS)):
-        dataSIS = pd.read_csv('SIS_Polya_Testing/6Nodes/'+inputSIS[i]+'.csv', header=None).values.tolist()
-        dataPolya = pd.read_csv('SIS_Polya_Testing/6Nodes/'+inputPolya[i]+'.csv', header=None).values.tolist()
+    for i in range(len(inputPolya)):
+        #dataSIS = pd.read_csv('SIS_Polya_Testing/6Nodes/'+inputSIS[i]+'.csv', header=None).values.tolist()
+        dataPolya = pd.read_csv(inputPolya[i], header=None).values.tolist()
         In = []
         for j in range(len(dataPolya)):
             In.append(dataPolya[j][0])
-        plt.plot(range(max_n), In, label='Polya'+legend[i])
-        plt.plot(range(max_n), dataSIS, label='SIS'+legend[i])
+        plt.plot(range(max_n), In, label=legend[i])
+        #plt.plot(range(max_n), dataSIS, label='SIS'+legend[i])
         plt.xlabel('Time (n)')
         plt.ylabel('Infection Rate $\\tilde{I}_n$')
         plt.title(title)
@@ -51,17 +51,15 @@ def plot_In(inputSIS, inputPolya, axis, legend, max_n, title):
 
 def main():
     inputPolya = [
-    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist),
-    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist),
-    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist),
-    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist)
+    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_bet_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_close_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_deg_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv'
     ]
+    inputSIS=[]
 
-    inputSIS = [
-
-    ]
-
-    dist = ['Conc1', 'Conc3', 'uni']
+    legend = ['grad', 'betweeness', 'closeness', 'degree', 'percolation']
     title = '10N Dendrimer'
 
     max_n = 200
