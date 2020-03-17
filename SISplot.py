@@ -50,45 +50,20 @@ def plot_In(inputSIS, inputPolya, axis, legend, max_n, title):
     plt.show()
 
 def main():
-   # inputSIS = ['SIS_even_pre_10N_50sim.csv', 'SIS_rand_pre_10N_50sim.csv', 'SIS_heur_deg_pre_10N_50sim.csv',
-    #    'SIS_heur_bet_pre_10N_50sim.csv','SIS_heur_close_pre_10N_50sim.csv']
-   # inputPolya = ['polya_even_pre_10N_50sim.csv', 'polya_rand_pre_10N_50sim.csv', 'polya_heur_deg_pre_10N_50sim.csv',
-   #     'polya_heur_bet_pre_10N_50sim.csv','polya_heur_close_pre_10N_50sim.csv']
-    inputSIS = ['SIS_uniform_even_10N_50sim.csv', 'SIS_rand_even_10N_50sim.csv', 'SIS_heur_deg_even_B30_10N_50sim.csv',
-    'SIS_heur_close_even_B30_10N_50sim.csv', 'SIS_heur_bet_even_B30_10N_50sim.csv']
-    inputPolya = ['polya_uniform_even_10N_50sim.csv', 'polya_rand_even_10N_50sim.csv', 'polya_heur_deg_even_B30_10N_50sim.csv',
-    'polya_heur_close_even_B30_10N_50sim.csv','polya_heur_bet_even_B30_10N_50sim.csv']
-    
     inputPolya = [
-    'polya_pre_heur_deg_6N_bridge_B20_R2_C1',
-    'polya_pre_heur_deg_6N_bridge_B20_R2_C3',
-    'polya_pre_heur_deg_6N_bridge_B20_R2_uni'
+    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist),
+    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist),
+    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist),
+    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist)
     ]
 
     inputSIS = [
-    'SIS_pre_heur_deg_even_6N_bridge_B20_R2_C1',
-    'SIS_pre_heur_deg_6N_bridge_B20_R2_C3',
-    'SIS_pre_heur_deg_even_6N_bridge_B20_R2_uni'
+
     ]
 
-    legend = ['C1', 'C3', 'uni']
-    title = '6N Bridge Deg'
-    '''
-    inputPolya = [
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_uni',
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_even',
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_C1',
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_C3'
-    ]
-    inputSIS = [
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_uni',
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_even',
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_C1',
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_C3'
-    ]
-    legend = ['uni', 'even', 'C1', 'C3']
-    title = '6N Bridge Perc'
-    '''
+    dist = ['Conc1', 'Conc3', 'uni']
+    title = '10N Dendrimer'
+
     max_n = 200
     axis = [0, max_n, 0, 1]
     #p = getP('10node_proportions_even.csv')
