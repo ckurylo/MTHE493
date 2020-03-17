@@ -47,9 +47,9 @@ if get_user_input('Input parameters in terminal? (y/n)') == 'y':
     outputDirectory = get_user_input('Output Directory (use / for backslash, end in /)')
     output = os.path.splitext(get_user_input('Output file name'))[0] + '.csv'
 else:
-    inputDirectory = 'data/to_merge/prepost/first_comparison/post/'
+    inputDirectory = 'data/to_merge/topology/post_grad/stick/'
     inputL = os.listdir(inputDirectory)
-    output = 'polya_post_grad_10N_barabasi_uni_proportions_200sim_standard_ini.csv'
-    outputDirectory = 'data/merged_output/prepost/first_comparison/'
+    output = 'polya_post_grad_6N_stick_300sim_topology_test_6N.csv'
+    outputDirectory = 'data/merged_output/topology/stick/'
 
 ave_metrics(inputL, inputDirectory, output, outputDirectory)
