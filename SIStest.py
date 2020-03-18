@@ -127,7 +127,7 @@ for top in topology:
 budget = 20
 # HEURISTICS FOR 10 NODE DENDRIMER
 initialDist = ['Conc1', 'Conc3', 'uni']
-heuristic_methods = ['deg', 'close', 'bet', 'perc']
+heuristic_methods = ['deg', 'close', 'bet', 'perc','eigen']
 
 for dist in initialDist:
 
@@ -136,17 +136,35 @@ for dist in initialDist:
     adj_matrix = importG(adjFile)
     num_nodes = len(adj_matrix[0])
     Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
-    for i in range(4):
+    for i in range(len(heuristic_methods)):
         method = heuristic_methods[i]
         opt_method = [3,i+1,0]
-        outputFilePolya = 'SIS_Polya_Testing/10Nodes/polya_pre_heur_{opt}_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist, opt=method)
-        outputFileSIS = 'SIS_Polya_Testing/10Nodes/SIS_pre_heur_{opt}_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist, opt=method)
+        outputFilePolya = 'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_{opt}_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist, opt=method)
+        outputFileSIS = 'SIS_Polya_Testing/10Nodes/SIS_pre_unweighted_heur_{opt}_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist, opt=method)
 
         polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
             outputFilePolya, outputFileSIS, opt_method, tenacity)
 
 
+'''
+#dendrimer gradient discent 100 sims each (for 3 distributions)
+budget = 20
+num_sim = 100
+# GRAD FOR 10 NODE DENDRIMER
+initialDist = ['Conc1', 'Conc3', 'uni']
+for dist in initialDist:
+    adjFile = 'adj_files/10N_dendrimer_adj.csv'
+    ballFile = 'ball_proportion_files/10N_{dist}_proportions.csv'.format(dist=dist)
+    adj_matrix = importG(adjFile)
+    num_nodes = len(adj_matrix[0])
+    Tlist = [sum(get_balls(ballFile)[i]) for i in range(num_nodes)]
+    opt_method = [4,3,1]
+    outputFilePolya = 'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist)
+    outputFileSIS = 'SIS_Polya_Testing/10Nodes/SIS_post_grad_10N_dendrimer_B12_R2_M5_{dist}.csv'.format(dist=dist)
 
+    polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+        outputFilePolya, outputFileSIS, opt_method, tenacity)
+'''
 # budget as nodes*deltaR = 2----*12
 # memory 5/10 use 5
 # 10 balls initially-- keep starting infaction the same over all trials of distribution

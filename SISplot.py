@@ -25,69 +25,50 @@ def getP(ballFile):
 
 def plot_In(inputSIS, inputPolya, axis, legend, max_n, title):
 
-    for i in range(len(inputSIS)):
-        dataSIS = pd.read_csv('SIS_Polya_Testing/6Nodes/'+inputSIS[i]+'.csv', header=None).values.tolist()
-        dataPolya = pd.read_csv('SIS_Polya_Testing/6Nodes/'+inputPolya[i]+'.csv', header=None).values.tolist()
+    for i in range(len(inputPolya)):
+        #dataSIS = pd.read_csv('SIS_Polya_Testing/6Nodes/'+inputSIS[i]+'.csv', header=None).values.tolist()
+        dataPolya = pd.read_csv(inputPolya[i], header=None).values.tolist()
         In = []
         for j in range(len(dataPolya)):
             In.append(dataPolya[j][0])
-        plt.plot(range(max_n), In, label='Polya'+legend[i])
-        plt.plot(range(max_n), dataSIS, label='SIS'+legend[i])
+        plt.plot(range(max_n), In, label=legend[i])
+        #plt.plot(range(max_n), dataSIS, label='SIS'+legend[i])
         plt.xlabel('Time (n)')
         plt.ylabel('Infection Rate $\\tilde{I}_n$')
-        plt.title(title)
-        plt.legend()
-        #plt.show()
-    '''
-        plt.plot([0, max_n], [p, p], 'r--')
-        plt.axis(axis_list)
-        plt.xlabel('Time (n)')
-        plt.ylabel('Infection Rate $\\tilde{I}_n$')
-        plt.legend(legend)
-        plt.title('Curing 10-node network with Gradient Descent curing deployment')
-        plt.show()
-    '''
+
+    plt.title(title)
+    plt.legend()
     plt.show()
 
 def main():
-   # inputSIS = ['SIS_even_pre_10N_50sim.csv', 'SIS_rand_pre_10N_50sim.csv', 'SIS_heur_deg_pre_10N_50sim.csv',
-    #    'SIS_heur_bet_pre_10N_50sim.csv','SIS_heur_close_pre_10N_50sim.csv']
-   # inputPolya = ['polya_even_pre_10N_50sim.csv', 'polya_rand_pre_10N_50sim.csv', 'polya_heur_deg_pre_10N_50sim.csv',
-   #     'polya_heur_bet_pre_10N_50sim.csv','polya_heur_close_pre_10N_50sim.csv']
-    inputSIS = ['SIS_uniform_even_10N_50sim.csv', 'SIS_rand_even_10N_50sim.csv', 'SIS_heur_deg_even_B30_10N_50sim.csv',
-    'SIS_heur_close_even_B30_10N_50sim.csv', 'SIS_heur_bet_even_B30_10N_50sim.csv']
-    inputPolya = ['polya_uniform_even_10N_50sim.csv', 'polya_rand_even_10N_50sim.csv', 'polya_heur_deg_even_B30_10N_50sim.csv',
-    'polya_heur_close_even_B30_10N_50sim.csv','polya_heur_bet_even_B30_10N_50sim.csv']
-    
     inputPolya = [
-    'polya_pre_heur_deg_6N_bridge_B20_R2_C1',
-    'polya_pre_heur_deg_6N_bridge_B20_R2_C3',
-    'polya_pre_heur_deg_6N_bridge_B20_R2_uni'
+    #'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_bet_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_close_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_deg_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_eigen_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_bet_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_close_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_deg_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_eigen_10N_dendrimer_B12_R2_M5_avg.csv'
     ]
-
-    inputSIS = [
-    'SIS_pre_heur_deg_even_6N_bridge_B20_R2_C1',
-    'SIS_pre_heur_deg_6N_bridge_B20_R2_C3',
-    'SIS_pre_heur_deg_even_6N_bridge_B20_R2_uni'
-    ]
-
-    legend = ['C1', 'C3', 'uni']
-    title = '6N Bridge Deg'
+    inputSIS=[]
+    legend = ['betweenness','closeness','degree','percolation','eigenvector']
+        #'betweenness unweighted','closeness unweighted','degree unweighted','percolation unweighted','eigenvector unweighted']
+    title = '10 Node Dendrimer Weighted'
     '''
-    inputPolya = [
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_uni',
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_even',
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_C1',
-    'Polya_pre_heur_perc_6N_bridge_B20_R2_C3'
-    ]
-    inputSIS = [
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_uni',
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_even',
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_C1',
-    'SIS_pre_heur_perc_6N_bridge_B20_R2_C3'
-    ]
-    legend = ['uni', 'even', 'C1', 'C3']
-    title = '6N Bridge Perc'
+    for top in ['bridge', 'cycle', 'star', 'stick']:
+        inputPolya = [
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_bet_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_close_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_deg_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_perc_6N_{top}_B12_R2_M5_avg.csv'.format(top=top)
+        ]
+
+        legend = ['betweeness', 'closeness', 'degree', 'percolation']
+        title = '6N {top}'.format(top=top)
     '''
     max_n = 200
     axis = [0, max_n, 0, 1]
