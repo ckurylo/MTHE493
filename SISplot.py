@@ -42,13 +42,23 @@ def plot_In(inputSIS, inputPolya, axis, legend, max_n, title):
 
 def main():
     inputPolya = [
-    'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_post_grad_10N_dendrimer_B12_R2_M5_avg.csv',
     'SIS_Polya_Testing/10Nodes/polya_pre_heur_bet_10N_dendrimer_B12_R2_M5_avg.csv',
     'SIS_Polya_Testing/10Nodes/polya_pre_heur_close_10N_dendrimer_B12_R2_M5_avg.csv',
     'SIS_Polya_Testing/10Nodes/polya_pre_heur_deg_10N_dendrimer_B12_R2_M5_avg.csv',
-    'SIS_Polya_Testing/10Nodes/polya_pre_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv'
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv',
+    'SIS_Polya_Testing/10Nodes/polya_pre_heur_eigen_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_bet_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_close_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_deg_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv',
+    #'SIS_Polya_Testing/10Nodes/polya_pre_unweighted_heur_eigen_10N_dendrimer_B12_R2_M5_avg.csv'
     ]
     inputSIS=[]
+    legend = ['betweenness','closeness','degree','percolation','eigenvector']
+        #'betweenness unweighted','closeness unweighted','degree unweighted','percolation unweighted','eigenvector unweighted']
+    title = '10 Node Dendrimer Weighted'
+    '''
     for top in ['bridge', 'cycle', 'star', 'stick']:
         inputPolya = [
         'SIS_Polya_Testing/6Nodes/polya_pre_heur_bet_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
@@ -59,13 +69,13 @@ def main():
 
         legend = ['betweeness', 'closeness', 'degree', 'percolation']
         title = '6N {top}'.format(top=top)
-
-        max_n = 200
-        axis = [0, max_n, 0, 1]
-        #p = getP('10node_proportions_even.csv')
-        #legend = ['SIS degree centrality', 'Polya degree centrality']
-        #legend = ['Uniform', 'Random', 'Degree Centrality', 'Closeness Centrality','Betweeness Centrality']
-        plot_In(inputSIS, inputPolya, axis, legend, max_n, title)
+    '''
+    max_n = 200
+    axis = [0, max_n, 0, 1]
+    #p = getP('10node_proportions_even.csv')
+    #legend = ['SIS degree centrality', 'Polya degree centrality']
+    #legend = ['Uniform', 'Random', 'Degree Centrality', 'Closeness Centrality','Betweeness Centrality']
+    plot_In(inputSIS, inputPolya, axis, legend, max_n, title)
 
 
 
