@@ -31,9 +31,9 @@ def dilation_input():
         pre_file = os.path.splitext(get_user_input('pre draw fileName to shorten and plot'))[0] + '.csv'
         post_file = os.path.splitext(get_user_input('post draw fileName for plot reference'))[0] + '.csv'
     else:
-        inputDirectory = 'SIS_Polya_Testing/sim_outputs/'
-        pre_file = 'pre_grad_6N_center_20sim_ini2.csv'
-        post_file = 'post_grad_6N_center_50sim_ini2.csv'
+        inputDirectory = 'data/merged_output/prepost/disease/'
+        pre_file = 'polya_pre_uni_100N_barabasi_100N_uni_proportions_300sim_prepost_disease_dilation.csv'
+        post_file = 'polya_pre_uni_100N_barabasi_100N_uni_proportions_300sim_prepost_disease.csv'
     title = get_user_input('Figure title:')
 
     metric_i = int(get_user_input('Metric to plot (In: 0, Sn: 1, Un: 2, Wn: 3, other: 4)'))
@@ -175,7 +175,7 @@ def main():
             except FileNotFoundError:
                 print('folder not found')
     else:
-        inputDirectory = 'data/merged_output/prepost/first_comparison/'
+        inputDirectory = 'data/merged_output/memory_test/case3/'
         inputL = os.listdir(inputDirectory)
 
     case = 'a'
