@@ -35,18 +35,9 @@ def plot_In(inputSIS, inputPolya, axis, legend, max_n, title):
         #plt.plot(range(max_n), dataSIS, label='SIS'+legend[i])
         plt.xlabel('Time (n)')
         plt.ylabel('Infection Rate $\\tilde{I}_n$')
-        plt.title(title)
-        plt.legend()
-        #plt.show()
-    '''
-        plt.plot([0, max_n], [p, p], 'r--')
-        plt.axis(axis_list)
-        plt.xlabel('Time (n)')
-        plt.ylabel('Infection Rate $\\tilde{I}_n$')
-        plt.legend(legend)
-        plt.title('Curing 10-node network with Gradient Descent curing deployment')
-        plt.show()
-    '''
+
+    plt.title(title)
+    plt.legend()
     plt.show()
 
 def main():
@@ -58,16 +49,23 @@ def main():
     'SIS_Polya_Testing/10Nodes/polya_pre_heur_perc_10N_dendrimer_B12_R2_M5_avg.csv'
     ]
     inputSIS=[]
+    for top in ['bridge', 'cycle', 'star', 'stick']:
+        inputPolya = [
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_bet_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_close_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_deg_6N_{top}_B12_R2_M5_avg.csv'.format(top=top),
+        'SIS_Polya_Testing/6Nodes/polya_pre_heur_perc_6N_{top}_B12_R2_M5_avg.csv'.format(top=top)
+        ]
 
-    legend = ['grad', 'betweeness', 'closeness', 'degree', 'percolation']
-    title = '10N Dendrimer'
+        legend = ['betweeness', 'closeness', 'degree', 'percolation']
+        title = '6N {top}'.format(top=top)
 
-    max_n = 200
-    axis = [0, max_n, 0, 1]
-    #p = getP('10node_proportions_even.csv')
-    #legend = ['SIS degree centrality', 'Polya degree centrality']
-    #legend = ['Uniform', 'Random', 'Degree Centrality', 'Closeness Centrality','Betweeness Centrality']
-    plot_In(inputSIS, inputPolya, axis, legend, max_n, title)
+        max_n = 200
+        axis = [0, max_n, 0, 1]
+        #p = getP('10node_proportions_even.csv')
+        #legend = ['SIS degree centrality', 'Polya degree centrality']
+        #legend = ['Uniform', 'Random', 'Degree Centrality', 'Closeness Centrality','Betweeness Centrality']
+        plot_In(inputSIS, inputPolya, axis, legend, max_n, title)
 
 
 
