@@ -132,7 +132,9 @@ def getDelta(G, deployment_method):
         C = centralityCalculation(G, deployment_method[1])
         for i in G.nodes:
             S.append(G.nodes[i]['superUrn'].Sm[0])
-        deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
+        deltaB = opt.not_Scaler_Heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
+        if deployment_method[1] == 4:
+            deltaB = opt.not_Scaler_Heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
     elif deployment_method[0] == 4:
         deltaB = opt.gradient(G, deployment_method[1], deployment_method[2], BUDGET, DELTA_R)
     deltaR = G.number_of_nodes()*[DELTA_R]
@@ -286,14 +288,19 @@ def centralityCalculation(G, cent_mes):
 
     perc_cent = percolation(G)
 
+    eigen_centrality = nx.eigenvector_centrality(G)
+    eigen_cent = [k for k in eigen_centrality.values()]
+
     if cent_mes == 1:
         return deg_cent
     elif cent_mes == 2:
         return close_cent
     elif cent_mes == 3:
         return bet_cent
-    else:
+    elif cent_mes == 4:
         return perc_cent
+    else:
+        return eigen_cent
 
 
 def percolation(G):

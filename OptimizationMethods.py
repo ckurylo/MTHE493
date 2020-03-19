@@ -54,9 +54,18 @@ def heuristic(n, b, N, C, S, p_p, G):
         deltaB = [0]*n
         totalInfectionCentralityRatio = 0
         for i in range(n):
-            totalInfectionCentralityRatio += N[i]*C[i]*S[i]
+            totalInfectionCentralityRatio += N[i]*C[i]*S[i] 
         for i in range(n):
             deltaB[i] = math.floor(b*N[i]*C[i]*S[i] / totalInfectionCentralityRatio)
+    return deltaB
+
+def not_Scaler_Heuristic(n, b, N, C, S, p_p, G, perc=0):
+    deltaB = [0]*n
+    totalInfectionCentralityRatio = 0
+    for i in range(n):
+        totalInfectionCentralityRatio += C[i]
+    for i in range(n):
+        deltaB[i] = math.floor(b*C[i] / totalInfectionCentralityRatio)
     return deltaB
 
 
