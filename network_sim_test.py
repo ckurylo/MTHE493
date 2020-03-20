@@ -183,9 +183,10 @@ elif name_choice == 2:
 else:
     outputFile = os.path.splitext(get_user_input('please enter output file name'))[0] + '.csv'
 
+tenacity = int(get_user_input('tenacity factor (should be 1 for unweighted)'))
 
 polya_sim_test(adjFile, ballFile, outputBallFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, outputFile,
-               outputDirectory, opt_method, tenacity=1)
+               outputDirectory, opt_method, tenacity)
 
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
 # print(lmax)

@@ -115,9 +115,10 @@ def createPolyaNetwork(adjFile, node_balls, Tlist):  # generates graph and creat
         G.nodes[i]['superUrn'] = SuperUrn(i, R, B, G)
     for i in range(len(list(G.nodes))):  # initialize network variables at every node
         G.nodes[i]['superUrn'].setInitialVariables()
-
-    #nx.draw(G, pos = nx.planar_layout(G))
-    #plt.show()
+    for u, v, d in G.edges(data=True):
+        d['distance'] = 1
+    nx.draw(G, pos = nx.spring_layout(G))
+    plt.show()
     return G
 
 
@@ -277,29 +278,24 @@ def update_graph(G, data):
 
 def centralityCalculation(G, cent_mes):
 
-    deg_centrality = nx.degree_centrality(G)
-    deg_cent = [k for k in deg_centrality.values()]
-
-    close_centrality = nx.closeness_centrality(G)
-    close_cent = [k for k in close_centrality.values()]
-
-    bet_centrality = nx.betweenness_centrality(G, normalized = True, endpoints = False)
-    bet_cent = [k for k in bet_centrality.values()]
-
-    perc_cent = percolation(G)
-
-    eigen_centrality = nx.eigenvector_centrality(G)
-    eigen_cent = [k for k in eigen_centrality.values()]
-
     if cent_mes == 1:
+        deg_centrality = nx.degree_centrality(G)
+        deg_cent = [k for k in deg_centrality.values()]
         return deg_cent
     elif cent_mes == 2:
+        close_centrality = nx.closeness_centrality(G, distance='distance')
+        close_cent = [k for k in close_centrality.values()]
         return close_cent
     elif cent_mes == 3:
+        bet_centrality = nx.betweenness_centrality(G, weight='distance', normalized=True, endpoints=False)
+        bet_cent = [k for k in bet_centrality.values()]
         return bet_cent
     elif cent_mes == 4:
+        perc_cent = percolation(G)
         return perc_cent
     else:
+        eigen_centrality = nx.eigenvector_centrality(G, max_iter=1000, weight='distance')
+        eigen_cent = [k for k in eigen_centrality.values()]
         return eigen_cent
 
 
@@ -309,7 +305,7 @@ def percolation(G):
     for node in G.nodes:
         balldict[node] = G.nodes[node]['superUrn'].Um[0]
 
-    centrality = nx.percolation_centrality(G, states = balldict)
+    centrality = nx.percolation_centrality(G, states = balldict, weight='distance')
 
     return centrality
 
@@ -340,21 +336,21 @@ def get_balls(ballName):
 
 def main():
     M = 5
-    budget = 25
+    budget = 250
     deltaR = 2
     delta = [budget, deltaR]
     max_n = 50
 
-    Tlist = 100* [10]
-    tenacity_factor = 1  # weight of node's own Urn in Super Urn
+    Tlist = 96 * [10]
+    tenacity_factor = 3  # weight of node's own Urn in Super Urn
     adjFile = '100N_barabasi_adj.csv'
-    adjFile = 'madagascar_weighted_adj.csv'
+    adjFile = 'adj_files/madagascar_weighted_adj.csv'
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [1, 3, 1]
+    opt_method = [3, 3, 0]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportions_96_nodes.csv'), opt_method,
-                       tenacity_factor)
+    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportion_files/ball_proportions_94_nodes.csv'),
+                       Tlist, opt_method, tenacity_factor, SIS=0)
 
     #opt_method = [3, 4, 0]
     #opt_method = [2]
@@ -365,11 +361,12 @@ def main():
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
     # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 
-    polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10N_uni_proportions.csv'), opt_method, tenacity_factor, SIS=1)
-    print("Polya: \n")
-    print(polya)
-    print("\n SIS: \n")
-    print(SIS)
+    #polya, SIS = network_simulation(adjFile, delta, M, max_n, get_balls('10N_uni_proportions.csv'), Tlist,
+    #                                opt_method, tenacity_factor, SIS=1)
+    # print("Polya: \n")
+    # print(polya)
+    # print("\n SIS: \n")
+    # print(SIS)
     """
     G, cent = centralityCalculation('100N_barabasi_adj.csv')
     neigh = numNeighbors(G)

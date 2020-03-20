@@ -57,7 +57,7 @@ def plotGraph(reduced, g):
     plt.show()
 
 def main():
-    adjFile = 'goodmad.csv'
+    adjFile = 'madagascar_weighted_adj.csv'
     G = nx.from_numpy_matrix(pd.read_csv(adjFile, header=None).as_matrix())
     iterations = 6
     selection_criteria = 0
