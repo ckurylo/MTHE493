@@ -105,6 +105,24 @@ for i in range(len(heuristic_methods)):
     polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
         outputFilePolya, outputFileSIS, opt_method, tenacity)
 
+opt_method = [1,0,0]
+outputFilePolya = 'MADAGASCAR/polya_pre_weighted_uniform_ck.csv'
+outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_uniform_ck.csv'
+
+polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+    outputFilePolya, outputFileSIS, opt_method, tenacity)
+
+opt_method = [2,0,0]
+outputFilePolya = 'MADAGASCAR/polya_random_ck.csv'
+outputFileSIS = 'MADAGASCAR/SIS_random_ck.csv'
+
+polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+    outputFilePolya, outputFileSIS, opt_method, tenacity)
+
+
+
+
+
 
 
 
