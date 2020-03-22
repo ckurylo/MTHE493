@@ -3,6 +3,7 @@ import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
 import time
+import write_ball_proportions as wbp
 
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
@@ -213,7 +214,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, 
     start_time = time.time()
 
     polya_network = createPolyaNetwork(adjFile, node_balls, Tlist)  # create network of urns
-    #infection_data = {}
+    infection_data = {}
     disease_metrics = []
     N = len(list(polya_network.nodes))
     if(SIS):
@@ -227,16 +228,17 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, 
         v, delta = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v, delta[0])
         disease_metrics.append(m)
-
+        if abs(m[2]-0.42) < 0.1:
+            wbp.write_balls_from_G(polya_network, 'ball_proportion_files/94N_post_disease_proportions.csv')
         if(SIS):
             PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
             diseaseSISresult = avgInfSIS
 
-        #infection_data[n] = {}
-        #for node in polya_network.nodes:
-            #infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
-        # printNetwork(polya_network, n,v,m)  # print network attributes
-    #update_graph(polya_network, infection_data)
+        infection_data[n] = {}
+        for node in polya_network.nodes:
+            infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
+        printNetwork(polya_network, n,v,m)  # print network attributes
+    update_graph(polya_network, infection_data)
 
     if(SIS):
         diseaseSISresult.pop()
@@ -335,21 +337,23 @@ def get_balls(ballName):
 
 
 def main():
-    M = 5
-    budget = 250
-    deltaR = 2
+    M = 1001
+    budget = 0
+    deltaR = 1690
     delta = [budget, deltaR]
-    max_n = 50
+    max_n = 1000
 
-    Tlist = 96 * [10]
-    tenacity_factor = 3  # weight of node's own Urn in Super Urn
-    adjFile = '100N_barabasi_adj.csv'
-    adjFile = 'adj_files/madagascar_weighted_adj.csv'
+    Tlist = 94 * [41702]
+    tenacity_factor = 1  # weight of node's own Urn in Super Urn
+    #adjFile = '100N_barabasi_adj.csv'
+    adjFile = 'adj_files/madagascar_unweighted_adj.csv'
+    ballFile = 'ball_proportions_files/94N_pre_disease_proportions.csv'
+
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
-    opt_method = [3, 3, 0]
+    opt_method = [1, 1, 0]
     #opt_method = [2]
-    network_simulation(adjFile, delta, M, max_n, get_balls('ball_proportion_files/ball_proportions_94_nodes.csv'),
+    network_simulation(adjFile, delta, M, max_n, get_balls(ballFile),
                        Tlist, opt_method, tenacity_factor, SIS=0)
 
     #opt_method = [3, 4, 0]
