@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import time
 import write_ball_proportions as wbp
-
+import matplotlib.patches as mpatches
 from matplotlib import animation
 from matplotlib.animation import FuncAnimation
 from celluloid import Camera
@@ -118,8 +118,8 @@ def createPolyaNetwork(adjFile, node_balls, Tlist):  # generates graph and creat
         G.nodes[i]['superUrn'].setInitialVariables()
     for u, v, d in G.edges(data=True):
         d['distance'] = 1
-    nx.draw(G, pos = nx.spring_layout(G))
-    plt.show()
+    # nx.draw(G, pos = nx.spring_layout(G))
+    # plt.show()
     return G
 
 
@@ -214,7 +214,7 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, 
     start_time = time.time()
 
     polya_network = createPolyaNetwork(adjFile, node_balls, Tlist)  # create network of urns
-    infection_data = {}
+    # infection_data = {}
     disease_metrics = []
     N = len(list(polya_network.nodes))
     if(SIS):
@@ -228,17 +228,17 @@ def network_simulation(adjFile, delta, M, max_n, node_balls, Tlist, opt_method, 
         v, delta = networkTimeStep(polya_network, opt_method)  # proceed to next step in draw process
         m = diseaseMetrics(polya_network, v, delta[0])
         disease_metrics.append(m)
-        if abs(m[2]-0.42) < 0.1:
-            wbp.write_balls_from_G(polya_network, 'ball_proportion_files/94N_post_disease_proportions.csv')
+        # if abs(m[2]-0.42) < 0.1:
+        #     wbp.write_balls_from_G(polya_network, 'ball_proportion_files/94N_post_disease_proportions.csv')
         if(SIS):
             PiSIS, avgInfSIS = sisParallel(adjFile, N, delta, PiSIS, avgInfSIS, n)
             diseaseSISresult = avgInfSIS
 
-        infection_data[n] = {}
-        for node in polya_network.nodes:
-            infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
-        printNetwork(polya_network, n,v,m)  # print network attributes
-    update_graph(polya_network, infection_data)
+    #     infection_data[n] = {}
+    #     for node in polya_network.nodes:
+    #         infection_data[n][node] = polya_network.nodes[node]['superUrn'].Um[1]
+    #     printNetwork(polya_network, n,v,m)  # print network attributes
+    # update_graph(polya_network, infection_data)
 
     if(SIS):
         diseaseSISresult.pop()
@@ -270,6 +270,13 @@ def update_graph(G, data):
                 colour_map[n].append('green')
 
         nx.draw(G, node_color=colour_map[n], pos=layout, node_size=30, width=0.25)
+        label = "Disease Ratios for Time step: " + str(n)
+        time_patch = mpatches.Patch(color='white', label=label)
+        green_patch = mpatches.Patch(color='green', label=' < 40%')
+        yellow_patch = mpatches.Patch(color='yellow', label=' 40% - 60%')
+        orange_patch = mpatches.Patch(color='orange', label=' 60% - 95%')
+        red_patch = mpatches.Patch(color='red', label=' > 95%')
+        plt.legend(handles=[time_patch, green_patch, yellow_patch, orange_patch, red_patch], prop={'size': 6})
         plt.draw()
         camera.snap()
 
@@ -347,7 +354,7 @@ def main():
     tenacity_factor = 1  # weight of node's own Urn in Super Urn
     #adjFile = '100N_barabasi_adj.csv'
     adjFile = 'adj_files/madagascar_unweighted_adj.csv'
-    ballFile = 'ball_proportions_files/94N_pre_disease_proportions.csv'
+    ballFile = 'ball_proportion_files/94N_pre_disease_proportions.csv'
 
     defConstants(M, delta[0], delta[1], tenacity_factor)
 
