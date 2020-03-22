@@ -40,7 +40,7 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     for i in range(num_nodes):
         ave_p += node_balls[i][1] / sum(node_balls[i])
     ave_p /= num_nodes
-    print(ave_p)
+    #print(ave_p)
 
     total_time = 0
     for i in range(num_sim):
@@ -68,34 +68,49 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     my_csv.close()
 
 ###############################
-# PARAMETER INPUT
-max_n = 200
-m_mem = 5
-num_sim = 200
-'''
-adjFile = '10N_barabasi_adj.csv'
-outputFilePolya = 'polya_heur_bet_even_B30_10N_50sim.csv'
-outputFileSIS = 'SIS_heur_bet_even_B30_10N_50sim.csv'
-ballFile = '10node_proportions_even.csv'
-'''
-'''
-adjFile = 'adj_files/6N_bridge_adj.csv'
-outputFilePolya = 'SIS_Polya_Testing/6Nodes/polya_pre_heur_deg_6N_bridge_B20_R2_even.csv'
-outputFileSIS = 'SIS_Polya_Testing/6Nodes/SIS_pre_heur_deg_6N_bridge_B20_R2_even.csv'
-ballFile = 'ball_proportion_files/6N_even_proportions.csv'
-'''
-########
-budget = 12
-deltaR = 2
-tenacity = 1  # weight of node's own Urn in Super Urn
-
 # opt_method = [3,1,0]
 # opt_method: [1] for uniform vaccine deployment, [2] for random
     # [3, i] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
+# PARAMETER INPUT
+max_n = 1000
+m_mem = 15
+num_sim = 500
+
+########
+
+tenacity = 1  # weight of node's own Urn in Super Urn
+
+#Madagascar Testing
+'''
+T = 41 702
+'''
+deltaR = 1690
+budget = 176471
+heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
+
+adjFile = 'adj_files/madagascar_weighted_adj.csv'
+
+ballFile = 'ball_proportion_files/94N_post_disease_proportions.csv'
+adj_matrix = importG(adjFile)
+num_nodes = len(adj_matrix[0])
+Tlist = [41702 for i in range(num_nodes)]
+for i in range(len(heuristic_methods)):
+    method = heuristic_methods[i]
+    opt_method = [3,i+1,0]
+    outputFilePolya = 'MADAGASCAR/polya_pre_weighted_heur_{opt}_ck.csv'.format(opt=method)
+    outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_heur_{opt}_ck.csv'.format(opt=method)
+
+    polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+        outputFilePolya, outputFileSIS, opt_method, tenacity)
+
+
+
 
 '''
+budget = 12
+deltaR = 2
 # HEURISTICS FOR 6Nodes 
 topology = ['bridge', 'cycle', 'star', 'stick']
 initialDist = ['Conc1', 'Conc3', 'uni']
@@ -123,7 +138,7 @@ for top in topology:
     print("FINISHED" + top)
 '''
 
-
+'''
 budget = 20
 # HEURISTICS FOR 10 NODE DENDRIMER
 initialDist = ['Conc1', 'Conc3', 'uni']
@@ -144,7 +159,7 @@ for dist in initialDist:
 
         polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
             outputFilePolya, outputFileSIS, opt_method, tenacity)
-
+'''
 
 '''
 #dendrimer gradient discent 100 sims each (for 3 distributions)
