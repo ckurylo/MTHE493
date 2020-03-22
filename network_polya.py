@@ -134,9 +134,9 @@ def getDelta(G, deployment_method):
         C = centralityCalculation(G, deployment_method[1])
         for i in G.nodes:
             S.append(G.nodes[i]['superUrn'].Sm[0])
-        deltaB = opt.not_Scaler_Heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
+        deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
         if deployment_method[1] == 4:
-            deltaB = opt.not_Scaler_Heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
+            deltaB = opt.heuristic(G.number_of_nodes(), BUDGET, N, C, S, deployment_method[2], G)
     elif deployment_method[0] == 4:
         deltaB = opt.gradient(G, deployment_method[1], deployment_method[2], BUDGET, DELTA_R)
     deltaR = G.number_of_nodes()*[DELTA_R]
