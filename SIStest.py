@@ -78,6 +78,7 @@ max_n = 300
 m_mem = 15
 num_sim = 250
 
+
 ########
 
 tenacity = 1  # weight of node's own Urn in Super Urn
@@ -99,22 +100,28 @@ Tlist = [41702 for i in range(num_nodes)]
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
     opt_method = [3,i+1,0]
-    outputFilePolya = 'MADAGASCAR/polya_pre_weighted_heur_{opt}_ck.csv'.format(opt=method)
-    outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_heur_{opt}_ck.csv'.format(opt=method)
+
+    outputFilePolya = 'MADAGASCAR/polya_pre_weighted_heur_{opt}_sg_laptop.csv'.format(opt=method)
+    outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_heur_{opt}_sg_laptop.csv'.format(opt=method)
+
 
     polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
         outputFilePolya, outputFileSIS, opt_method, tenacity)
 
 opt_method = [1,0,0]
-outputFilePolya = 'MADAGASCAR/polya_pre_weighted_uniform_ck.csv'
-outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_uniform_ck.csv'
+
+outputFilePolya = 'MADAGASCAR/polya_pre_weighted_uniform_sg_laptop.csv'
+outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_uniform_sg_laptop.csv'
+
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
     outputFilePolya, outputFileSIS, opt_method, tenacity)
 
 opt_method = [2,0,0]
-outputFilePolya = 'MADAGASCAR/polya_random_ck.csv'
-outputFileSIS = 'MADAGASCAR/SIS_random_ck.csv'
+
+outputFilePolya = 'MADAGASCAR/polya_random_sg_laptop.csv'
+outputFileSIS = 'MADAGASCAR/SIS_random_sg_laptop.csv'
+
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
     outputFilePolya, outputFileSIS, opt_method, tenacity)
