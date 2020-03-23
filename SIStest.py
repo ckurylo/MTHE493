@@ -76,7 +76,6 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
 # PARAMETER INPUT
 max_n = 300
 m_mem = 15
-
 num_sim = 250
 
 
