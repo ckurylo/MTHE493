@@ -74,9 +74,9 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 # PARAMETER INPUT
-max_n = 1000
+max_n = 300
 m_mem = 15
-num_sim = 500
+num_sim = 250
 
 ########
 
@@ -90,7 +90,7 @@ deltaR = 1690
 budget = 176471
 heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
 
-adjFile = 'adj_files/madagascar_weighted_adj.csv'
+adjFile = 'adj_files/madagascar_unweighted_adj.csv'
 
 ballFile = 'ball_proportion_files/94N_post_disease_proportions.csv'
 adj_matrix = importG(adjFile)
