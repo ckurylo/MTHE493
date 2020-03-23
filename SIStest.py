@@ -74,9 +74,9 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 # PARAMETER INPUT
-max_n = 1000
+max_n = 300
 m_mem = 15
-num_sim = 500
+num_sim = 50
 
 ########
 
@@ -90,7 +90,7 @@ deltaR = 1690
 budget = 176471
 heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
 
-adjFile = 'adj_files/madagascar_weighted_adj.csv'
+adjFile = 'adj_files/madagascar_unweighted_adj.csv'
 
 ballFile = 'ball_proportion_files/94N_post_disease_proportions.csv'
 adj_matrix = importG(adjFile)
@@ -99,22 +99,22 @@ Tlist = [41702 for i in range(num_nodes)]
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
     opt_method = [3,i+1,0]
-    outputFilePolya = 'MADAGASCAR/polya_pre_weighted_heur_{opt}_ck.csv'.format(opt=method)
-    outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_heur_{opt}_ck.csv'.format(opt=method)
+    outputFilePolya = 'MADAGASCAR/polya_pre_weighted_heur_{opt}_sg_desktop.csv'.format(opt=method)
+    outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_heur_{opt}_sg_desktop.csv'.format(opt=method)
 
     polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
         outputFilePolya, outputFileSIS, opt_method, tenacity)
 
 opt_method = [1,0,0]
-outputFilePolya = 'MADAGASCAR/polya_pre_weighted_uniform_ck.csv'
-outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_uniform_ck.csv'
+outputFilePolya = 'MADAGASCAR/polya_pre_weighted_uniform_sg_desktop.csv'
+outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_uniform_sg_desktop.csv'
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
     outputFilePolya, outputFileSIS, opt_method, tenacity)
 
 opt_method = [2,0,0]
-outputFilePolya = 'MADAGASCAR/polya_random_ck.csv'
-outputFileSIS = 'MADAGASCAR/SIS_random_ck.csv'
+outputFilePolya = 'MADAGASCAR/polya_random_sg_desktop.csv'
+outputFileSIS = 'MADAGASCAR/SIS_random_sg_desktop.csv'
 
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
     outputFilePolya, outputFileSIS, opt_method, tenacity)
