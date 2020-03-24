@@ -6,29 +6,32 @@ def get_user_input(prompt):
     print(prompt + ':', end='\t')
     return input()
 
-def ave_metrics(inputF_list, inputDirectory, outputFileName, outputDirectory):
+def ave_metrics(inputF_list, inputDirectory, inputWeight, outputFileName, outputDirectory):
+    num_sim = sum(inputWeight)
     In = []
     Sn = []
     Un = []
     Wn = []
     num_files = len(inputF_list)
     data = pd.read_csv(inputDirectory + inputF_list[0], header=None).values.tolist()
-    simTime = data[0][4]/num_files
+    simTime = inputWeight[0] * data[0][4]/num_sim
     max_n = len(data)
     for i in range(max_n):
-        In.append(data[i][0]/num_files)
-        Sn.append(data[i][1]/num_files)
-        Un.append(data[i][2]/num_files)
-        Wn.append(data[i][3]/num_files)
+        In.append(inputWeight[0] * data[i][0]/num_sim)
+        Sn.append(inputWeight[0] * data[i][1]/num_sim)
+        Un.append(inputWeight[0] * data[i][2]/num_sim)
+        Wn.append(inputWeight[0] * data[i][3]/num_sim)
 
+    k = 1
     for inputFile in inputF_list[1:]:
         data = pd.read_csv(inputDirectory + inputFile, header=None).values.tolist()
-        simTime += data[0][4]/num_files
+        simTime += inputWeight[k] * data[0][4]/num_sim
         for i in range(max_n):
-            In[i] += data[i][0]/num_files
-            Sn[i] += data[i][1]/num_files
-            Un[i] += data[i][2]/num_files
-            Wn[i] += data[i][3]/num_files
+            In[i] += inputWeight[k] * data[i][0]/num_sim
+            Sn[i] += inputWeight[k] * data[i][1]/num_sim
+            Un[i] += inputWeight[k] * data[i][2]/num_sim
+            Wn[i] += inputWeight[k] * data[i][3]/num_sim
+        k += 1
 
     new_metrics = [[In[0], Sn[0], Un[0], Wn[0], simTime]]
     for i in range(max_n)[1:]:
@@ -44,12 +47,16 @@ if get_user_input('Input parameters in terminal? (y/n)') == 'y':
     inputDirectory = get_user_input('Input Directory (will merge all files in given directory, '
                                     'use / for backslash, end in /)')
     inputL = os.listdir(inputDirectory)
+    inputW = []
+    for i in range(len(inputL)):
+        inputW.append(int(get_user_input('num_sim file ' + str(i+1))))
     outputDirectory = get_user_input('Output Directory (use / for backslash, end in /)')
     output = os.path.splitext(get_user_input('Output file name'))[0] + '.csv'
 else:
-    inputDirectory = 'data/to_merge/prepost/vaccine_waste_time_dilation/'
+    inputDirectory = 'data/to_merge/madagascar/sis/uni/'
     inputL = os.listdir(inputDirectory)
-    output = 'polya_pre_grad_10N_barabasi_10N_uni_proportions_4sim_prepost_time_dilation.csv_vaccine_waste_cpu3.csv'
-    outputDirectory = 'data/merged_output/prepost/first_comparison/vaccine_waste/'
+    inputW = [250, 50, 250]
+    output = 'SIS_pre_uni_madagascar_500sim_final.csv'
+    outputDirectory = 'MADAGASCAR/final/sis/'
 
-ave_metrics(inputL, inputDirectory, output, outputDirectory)
+ave_metrics(inputL, inputDirectory, inputW, output, outputDirectory)
