@@ -112,10 +112,10 @@ def plot_dilation(inputDirectory, pre_file, post_file, metric_i, title, label, a
 
     for i in range(pre_max_n):
         pre_In.append(pre_data[i][metric_i])
-    plt.plot(np.linspace(0, post_max_n, num=pre_max_n, endpoint=False).tolist(), pre_In)
+    plt.plot(np.linspace(1, post_max_n+1, num=pre_max_n, endpoint=False).tolist(), pre_In)
     for i in range(post_max_n):
         post_In.append(post_data[i][metric_i])
-    plt.plot(range(post_max_n), post_In)
+    plt.plot(range(1, post_max_n+1), post_In)
 
     if plot_p == 'y': plt.plot([0, post_max_n], [p, p], 'r--')
 
@@ -135,7 +135,7 @@ def plot_In(inputF_list, inputDirectory, metric_i, case, title, label, axis_list
         max_n = len(data)
         for i in range(max_n):
             In.append(data[i][metric_i])
-        plt.plot(range(max_n), In)
+        plt.plot(range(1, max_n+1), In)
 
     if plot_SIS:
         SIS = pd.read_csv('SIS_data.csv', header=None).values.tolist()
@@ -146,7 +146,12 @@ def plot_In(inputF_list, inputDirectory, metric_i, case, title, label, axis_list
         elif case == 'c':
             plt.plot(range(len(SIS[2])), SIS[2], 'k')
 
-    if plot_p == 'y': plt.plot([0, max_n], [p, p], 'r--')
+    if plot_p == 'y':
+        if metric_i == 3:
+            plt.plot([0, max_n], [p, p], 'b--')
+            plt.plot([0, max_n], [44118, 44118], 'r--')
+        else:
+            plt.plot([0, max_n], [p, p], 'r--')
 
     plt.axis(axis_list)
     plt.xlabel(label[0])
@@ -175,7 +180,7 @@ def main():
             except FileNotFoundError:
                 print('folder not found')
     else:
-        inputDirectory = 'data/merged_output/memory_test/case3/'
+        inputDirectory = 'MADAGASCAR/final/polya/'
         inputL = os.listdir(inputDirectory)
 
     case = 'a'
@@ -208,40 +213,48 @@ def main():
         y1 = int(get_user_input('y axis lower bound'))
         y2 = int(get_user_input('y axis upper bound'))
         axis = [x1, x2, y1, y2]
-    else: axis = [0, 100, 0, 1]  # hard code in
+    else: axis = [1, 300, 0, 1]  # hard code in
 
     legend = []
     if get_user_input('Input legend? (y/n)') == 'y':
         for i in range(len(inputL)): legend.append(get_user_input('entry ' + str(i+1)))
     else: # hard code in
-        legend = ['bet cent', 'close cent', 'deg cent', 'grad', 'perc cent', 'random', 'uni']
+        legend = ['uniform', 'random', 'degree cent', 'closeness cent', 'betweenness cent', 'eigenvector cent', 'percolation cent']
 
     p = 0
-    plot_p = get_user_input('Plot average initial infection? (y/n)')
-    if plot_p == 'y':
-        legend.append('Average $ \\rho$')
+    if metric_i == 3:
+        plot_p = get_user_input('Plot Budget? (y/n)')
+        if plot_p == 'y':
+            p = 176471
+            legend += [r'Curing Budget $\mathcal{B}$']
+            legend += [r'Target Maximum Waste $\mathcal{W}$']
+    else:
+        plot_p = get_user_input('Plot average initial infection? (y/n)')
+        if plot_p == 'y':
+            legend.append('Average $ \\rho$')
 
-        read_input = get_user_input('read ball prop files from directory? (y/n)')
-        if read_input == 'y':
-            while True:
+            read_input = get_user_input('read ball prop files from directory? (y/n)')
+            if read_input == 'y':
+                while True:
+                    try:
+                        ballDirectory = get_user_input('Enter ball prop directory within ball_proportion_files '
+                                                   '(use / for backslash, and end with /)')
+                        ballPropL = os.listdir('ball_proportion_files/' + ballDirectory)
+                        break
+                    except FileNotFoundError:
+                        print('folder not found')
+            else:  # hard code in
+                ballDirectory = ''
+                ballPropL = ['94N_post_disease_proportions.csv']
+
+            for ballFile in ballPropL:
                 try:
-                    ballDirectory = get_user_input('Enter ball prop directory within ball_proportion_files '
-                                               '(use / for backslash, and end with /)')
-                    ballPropL = os.listdir('ball_proportion_files/' + ballDirectory)
-                    break
+                    p += getP(ballDirectory + ballFile)
                 except FileNotFoundError:
-                    print('folder not found')
-        else:  # hard code in
-            ballPropL = ['6N_uni_proportions.csv']
-
-        for ballFile in ballPropL:
-            try:
-                p += getP(ballDirectory + ballFile)
-            except FileNotFoundError:
-                print('something went wrong')
-                plot_p = False
-                break
-        p /= len(ballPropL)
+                    print('something went wrong')
+                    plot_p = False
+                    break
+            p /= len(ballPropL)
 
     try:
         plot_In(inputL, inputDirectory, metric_i, case, title, label, axis, legend, p, plot_p, plot_SIS)
