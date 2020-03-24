@@ -11,14 +11,15 @@ def get_ball_bounds(fileName, outputFile):
     ball_proportions = []
     p = 0
     for i in range(n_nodes):
-        T = 41702
         #R = np.random.choice(R_bd)
         #B = np.random.choice(B_bd)
-        R = 0
-        B = T
-        if i in [0, 4, 12, 29, 44]:
-            R = math.floor(0.42*T)
-            B = T-R
+        if i % 2 == 0:
+            R = 10
+            B = 0
+        else:
+            R = 2
+            B = 8
+
         p += R/(R+B)
         ball_proportions.append([B, R])
     p /= n_nodes
@@ -52,4 +53,4 @@ def write_balls_from_G(G, fileName):
 
 adj_dir = 'adj_files/'
 ball_dir = 'ball_proportion_files/'
-get_ball_bounds(adj_dir + 'madagascar_weighted_adj.csv', ball_dir + '94N_pre_disease_proportions.csv')
+get_ball_bounds(adj_dir + '100N_barabasi_adj.csv', ball_dir + '100N_Conc3_proportions.csv')
