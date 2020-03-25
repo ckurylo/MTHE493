@@ -74,9 +74,9 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 # PARAMETER INPUT
-max_n = 300
-m_mem = 15
-num_sim = 250
+max_n = 100
+m_mem = 10
+num_sim = 200
 
 
 ########
@@ -87,27 +87,59 @@ tenacity = 1  # weight of node's own Urn in Super Urn
 '''
 T = 41 702
 '''
-deltaR = 1690
-budget = 176471
+deltaR = 30
+budget = 400
 heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
 
-adjFile = 'adj_files/madagascar_unweighted_adj.csv'
+adjFile = 'adj_files/100N_barabasi_adj.csv'
 
-ballFile = 'ball_proportion_files/94N_post_disease_proportions.csv'
+
 adj_matrix = importG(adjFile)
 num_nodes = len(adj_matrix[0])
-Tlist = [41702 for i in range(num_nodes)]
+Tlist = [100 for i in range(num_nodes)]
+
+ballFile = 'ball_proportion_files/100N_uni_proportions.csv'
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
     opt_method = [3,i+1,0]
 
-    outputFilePolya = 'MADAGASCAR/polya_pre_weighted_heur_{opt}_sg_laptop.csv'.format(opt=method)
-    outputFileSIS = 'MADAGASCAR/SIS_pre_weighted_heur_{opt}_sg_laptop.csv'.format(opt=method)
+    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_uni_prop_first_comparison.csv'.format(opt=method)
+    outputFileSIS = 'data/SIS_pre_weighted_heur_{opt}_uni_prop_first_comparison.csv'.format(opt=method)
 
 
     polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
         outputFilePolya, outputFileSIS, opt_method, tenacity)
 
+
+ballFile = 'ball_proportion_files/100N_Conc1_proportions.csv'
+for i in range(len(heuristic_methods)):
+    method = heuristic_methods[i]
+    opt_method = [3,i+1,0]
+
+    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_Conc1_prop_first_comparison.csv'.format(opt=method)
+    outputFileSIS = 'data/SIS_pre_weighted_heur_{opt}_Conc1_prop_first_comparison.csv'.format(opt=method)
+
+
+    polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+        outputFilePolya, outputFileSIS, opt_method, tenacity)
+
+ballFile = 'ball_proportion_files/100N_Conc3_proportions.csv'
+for i in range(len(heuristic_methods)):
+    method = heuristic_methods[i]
+    opt_method = [3,i+1,0]
+
+    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_Conc3_prop_first_comparison.csv'.format(opt=method)
+    outputFileSIS = 'data/SIS_pre_weighted_heur_{opt}_Conc3_prop_first_comparison'.format(opt=method)
+
+
+    polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+        outputFilePolya, outputFileSIS, opt_method, tenacity)
+
+
+
+
+
+'''''
 opt_method = [1,0,0]
 
 outputFilePolya = 'MADAGASCAR/polya_pre_weighted_uniform_sg_laptop.csv'
@@ -126,7 +158,7 @@ outputFileSIS = 'MADAGASCAR/SIS_random_sg_laptop.csv'
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
     outputFilePolya, outputFileSIS, opt_method, tenacity)
 
-
+'''''
 
 
 
