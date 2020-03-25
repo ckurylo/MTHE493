@@ -53,10 +53,10 @@ if get_user_input('Input parameters in terminal? (y/n)') == 'y':
     outputDirectory = get_user_input('Output Directory (use / for backslash, end in /)')
     output = os.path.splitext(get_user_input('Output file name'))[0] + '.csv'
 else:
-    inputDirectory = 'data/to_merge/madagascar/sis/uni/'
+    inputDirectory = 'data/to_merge/prepost/time_dilation/'
     inputL = os.listdir(inputDirectory)
-    inputW = [250, 50, 250]
-    output = 'SIS_pre_uni_madagascar_500sim_final.csv'
-    outputDirectory = 'MADAGASCAR/final/sis/'
+    inputW = 3*[1]
+    output = 'polya_pre_grad_10N_barabasi_10N_uni_proportions_100sim_prepost_time_dilation.csv'
+    outputDirectory = 'PREPOST/sec_comparison/'
 
 ave_metrics(inputL, inputDirectory, inputW, output, outputDirectory)

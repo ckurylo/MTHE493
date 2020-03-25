@@ -31,9 +31,9 @@ def dilation_input():
         pre_file = os.path.splitext(get_user_input('pre draw fileName to shorten and plot'))[0] + '.csv'
         post_file = os.path.splitext(get_user_input('post draw fileName for plot reference'))[0] + '.csv'
     else:
-        inputDirectory = 'data/merged_output/prepost/disease/'
-        pre_file = 'polya_pre_uni_100N_barabasi_100N_uni_proportions_300sim_prepost_disease_dilation.csv'
-        post_file = 'polya_pre_uni_100N_barabasi_100N_uni_proportions_300sim_prepost_disease.csv'
+        inputDirectory = 'PREPOST/sec_comparison/'
+        pre_file = '01polya_pre_grad_10N_barabasi_10N_uni_proportions_100sim_prepost_time_dilation.csv'
+        post_file = '02polya_post_grad_10N_barabasi_10N_uni_proportions_100sim_prepost_first_comparison.csv_cpu5.csv'
     title = get_user_input('Figure title:')
 
     metric_i = int(get_user_input('Metric to plot (In: 0, Sn: 1, Un: 2, Wn: 3, other: 4)'))
@@ -66,7 +66,7 @@ def dilation_input():
     if get_user_input('Input legend? (y/n)') == 'y':
         for i in range(2): legend.append(get_user_input('entry ' + str(i + 1)))
     else:  # hard code in
-        legend = []
+        legend = ['time-step-shortened model', 'base model']
 
     p = 0
     plot_p = get_user_input('Plot average initial infection? (y/n)')
@@ -84,7 +84,8 @@ def dilation_input():
                 except FileNotFoundError:
                     print('folder not found')
         else:  # hard code in
-            ballPropL = ['6N_uni_proportions.csv']
+            ballPropL = ['10N_uni_proportions.csv']
+            ballDirectory = ''
 
         for ballFile in ballPropL:
             try:
@@ -180,7 +181,7 @@ def main():
             except FileNotFoundError:
                 print('folder not found')
     else:
-        inputDirectory = 'MADAGASCAR/final/polya/'
+        inputDirectory = 'PREPOST/sec_comparison/'
         inputL = os.listdir(inputDirectory)
 
     case = 'a'
@@ -220,7 +221,11 @@ def main():
         for i in range(len(inputL)): legend.append(get_user_input('entry ' + str(i+1)))
     else: # hard code in
         legend = ['uniform', 'random', 'degree cent', 'closeness cent', 'betweenness cent', 'eigenvector cent', 'percolation cent']
-
+        legend = ['uniform', 'random', 'degree cent', 'closeness cent', 'betweenness cent', 'eigenvector cent',
+                  'percolation cent', 'gradient descent']
+        legend = ['pre degree', 'pre closeness', 'pre betweenness', 'pre eigenvector', 'pre percolation']
+        legend += ['post degree', 'post closeness', 'post betweenness', 'post eigenvector', 'post percolation']
+        legend = ['pre gradient descent', 'post gradient descent']
     p = 0
     if metric_i == 3:
         plot_p = get_user_input('Plot Budget? (y/n)')
@@ -245,7 +250,7 @@ def main():
                         print('folder not found')
             else:  # hard code in
                 ballDirectory = ''
-                ballPropL = ['94N_post_disease_proportions.csv']
+                ballPropL = ['10N_uni_proportions.csv']
 
             for ballFile in ballPropL:
                 try:
