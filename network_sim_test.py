@@ -84,7 +84,9 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
 
 ###############################
 # PARAMETER INPUT
-'''
+
+'''''
+
 if get_user_input('Input parameters manually? (y/n)') == 'n':
     ### Initial Conditions File
     ini_fileName = 'madagascar_disease.txt'
@@ -109,7 +111,7 @@ if get_user_input('Input parameters manually? (y/n)') == 'n':
     # set budget to 0 in this case, max_n to the time at which we want to pull out ball proportions, and num_sim to 1
     opt_method = [1, 1, 0]
     # opt_method: [1] for uniform vaccine deployment, [2] for random
-    # [3, i, k] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent
+    # [3, i, k] for heuristic with i = 1 for deg cent, 2 for close cent, 3 for bet cent, 4 for perc cent, 5 for eigen
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
     # k = 0 for pre-draw optimization, k = 1 for post-draw optimization, k = 2 so balls are allocated to every node
 
@@ -192,6 +194,52 @@ polya_sim_test(adjFile, ballFile, outputBallFile, [budget, deltaR], max_n, num_s
 
 '''
 
+
+num_sim = 43
+tenacity = 1
+opt_method = [3, 5, 0]
+'''
+adjL = ['bridge', 'star', 'cycle', 'stick']
+ballF = 'ball_proportion_files/6N_uni_proportions.csv'
+Tlist = 6*[10]
+
+for i in range(3):
+    iniList = io.ini_file_to_ini('memory_test_case'+str(i+1)+'.txt')
+    max_n = iniList[1]
+    m_mem = iniList[2]
+    budget = iniList[3]
+    deltaR = iniList[4]
+
+    outputDir = 'data/to_merge/memory_test/test_case'+str(i+1)+'/eigen_cent/'
+    Path(os.getcwd() + '/' + outputDir).mkdir(parents=True, exist_ok=True)
+
+    for adj in adjL:
+        outputFilePolya = 'polya_pre_weighted_heur_eigen_{poo}_uni_prop_memory_test_case'.format(poo=adj)
+        outputFilePolya += str(i+1) + '.csv'
+        adjFile = 'adj_files/6N_' + adj + '_adj.csv'
+        polya_sim_test(adjFile, ballF, '', [budget, deltaR], max_n, num_sim, m_mem, 6, Tlist,
+                       outputFilePolya, outputDir, opt_method, tenacity)
+'''
+Tlist = 10 * [10]
+ballF = 'ball_proportion_files/10N_uni_proportions.csv'
+for i in range(3):
+    iniList = io.ini_file_to_ini('memory_test_case' + str(i + 1) + '.txt')
+    max_n = iniList[1]
+    m_mem = iniList[2]
+    budget = iniList[3]
+    deltaR = iniList[4]
+
+    outputDir = 'data/to_merge/memory_test/test_case' + str(i + 1) + '/eigen_cent/'
+    Path(os.getcwd() + '/' + outputDir).mkdir(parents=True, exist_ok=True)
+
+    outputFilePolya = 'polya_pre_weighted_heur_eigen_barabasi_uni_prop_memory_test_case'
+    outputFilePolya += str(i + 1) + '.csv'
+    adjFile = 'adj_files/10N_barabasi_adj.csv'
+    polya_sim_test(adjFile, ballF, '', [budget, deltaR], max_n, num_sim, m_mem, 10, Tlist,
+                       outputFilePolya, outputDir, opt_method, tenacity)
+
+'''
+
 # PARAMETER INPUT
 max_n = 100
 m_mem = 10
@@ -204,46 +252,47 @@ tenacity = 1  # weight of node's own Urn in Super Urn
 
 #Madagascar Testing
 '''
-T = 41 702
+
+#T = 41 702
 '''
-deltaR = 3
+deltaR = 30
 budget = 400
 heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
 
-adjFile = 'adj_files/100N_barabasi_adj.csv'
+adjFile = 'adj_files/10N_barabasi_adj.csv'
+
 
 
 adj_matrix = importG(adjFile)
 num_nodes = len(adj_matrix[0])
-Tlist = [10 for i in range(num_nodes)]
 
-ballFile = 'ball_proportion_files/100N_uni_proportions.csv'
+Tlist = [100 for i in range(num_nodes)]
+
+ballFile = 'ball_proportion_files/10N_uni_proportions.csv'
+
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
     opt_method = [3,i+1,0]
 
-    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_uni_prop_weight_test.csv'.format(opt=method)
+
+    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_uni_prop_first_comparison.csv'.format(opt=method)
+
 
     polya_sim_test(adjFile, ballFile, '', [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
                    outputFilePolya, '', opt_method, tenacity)
 
 
-ballFile = 'ball_proportion_files/100N_Conc1_proportions.csv'
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
-    opt_method = [3,i+1,0]
+    opt_method = [3,i+1,1]
 
-    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_Conc1_prop_weight_test.csv'.format(opt=method)
+    outputFilePolya = 'data/polya_post_weighted_heur_{opt}_uni_prop_first_comparison.csv'.format(opt=method)
+
 
     polya_sim_test(adjFile, ballFile, '', [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
                    outputFilePolya, '', opt_method, tenacity)
 
-ballFile = 'ball_proportion_files/100N_Conc3_proportions.csv'
-for i in range(len(heuristic_methods)):
-    method = heuristic_methods[i]
-    opt_method = [3,i+1,0]
 
-    outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_Conc3_prop_weight_test.csv'.format(opt=method)
+'''
 
-    polya_sim_test(adjFile, ballFile, '', [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
-        outputFilePolya, '', opt_method, tenacity)
+

@@ -74,9 +74,44 @@ def polya_sim_test(adjFile, ballFile, delta, max_n, num_sim, m_mem, num_nodes, T
     # [4, T, k] for gradient descent, T the number of iterations of the algo for each time step
             # k = 0 for pre-draw optimization, k = 1 for post-draw optimization
 # PARAMETER INPUT
+
+
 max_n = 100
 m_mem = 10
 num_sim = 200
+tenacity = 1  # weight of node's own Urn in Super Urn
+deltaR = 30
+budget = 400
+heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
+
+for dist in distributions:
+    adjFile = 'adj_files/100N_barabasi_adj.csv'
+
+    ballFile = 'ball_proportion_files/94N_post_disease_proportions.csv'.format(dist=dist)
+    adj_matrix = importG(adjFile)
+    num_nodes = len(adj_matrix[0])
+    Tlist = [100 for i in range(num_nodes)]
+    for i in range(len(heuristic_methods)):
+        method = heuristic_methods[i]
+        opt_method = [3,i+1,0]
+
+        outputFilePolya = 'SIS_Polya_Testing/polya_pre_unweighted_heur_{opt}_{dist}.csv'.format(opt=method, dist=dist)
+        outputFileSIS = 'SIS_Polya_Testing/SIS_pre_unweighted_heur_{opt}_{dist}.csv'.format(opt=method, dist=dist)
+
+
+        polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
+            outputFilePolya, outputFileSIS, opt_method, tenacity)
+
+
+
+
+
+
+"""
+max_n = 300
+m_mem = 15
+num_sim = 250
+
 
 
 ########
@@ -158,7 +193,9 @@ outputFileSIS = 'MADAGASCAR/SIS_random_sg_laptop.csv'
 polya_sim_test(adjFile, ballFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
     outputFilePolya, outputFileSIS, opt_method, tenacity)
 
-'''''
+
+"""
+
 
 
 
