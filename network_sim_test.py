@@ -84,7 +84,9 @@ def polya_sim_test(adjFile, ballFile, outputBallFile, delta, max_n, num_sim, m_m
 
 ###############################
 # PARAMETER INPUT
+
 '''''
+
 if get_user_input('Input parameters manually? (y/n)') == 'n':
     ### Initial Conditions File
     ini_fileName = 'madagascar_disease.txt'
@@ -184,13 +186,14 @@ else:
     outputFile = os.path.splitext(get_user_input('please enter output file name'))[0] + '.csv'
 
 
-polya_sim_test(adjFile, ballFile, outputBallFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, outputFile,
+polya_sim_test(adjFile, ballFile, outputBallFile, [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist, outputFile,
                outputDirectory, opt_method, tenacity=1)
 
 # lmax = max(numpy.linalg.eig(adj_matrix)[0])
 # print(lmax)
 
 '''
+
 
 num_sim = 43
 tenacity = 1
@@ -236,6 +239,7 @@ for i in range(3):
                        outputFilePolya, outputDir, opt_method, tenacity)
 
 '''
+
 # PARAMETER INPUT
 max_n = 100
 m_mem = 10
@@ -248,6 +252,7 @@ tenacity = 1  # weight of node's own Urn in Super Urn
 
 #Madagascar Testing
 '''
+
 #T = 41 702
 '''
 deltaR = 30
@@ -257,19 +262,25 @@ heuristic_methods = ['deg', 'close', 'bet', 'perc', 'eigen']
 adjFile = 'adj_files/10N_barabasi_adj.csv'
 
 
+
 adj_matrix = importG(adjFile)
 num_nodes = len(adj_matrix[0])
+
 Tlist = [100 for i in range(num_nodes)]
 
 ballFile = 'ball_proportion_files/10N_uni_proportions.csv'
+
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
     opt_method = [3,i+1,0]
 
+
     outputFilePolya = 'data/polya_pre_weighted_heur_{opt}_uni_prop_first_comparison.csv'.format(opt=method)
+
 
     polya_sim_test(adjFile, ballFile, '', [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
                    outputFilePolya, '', opt_method, tenacity)
+
 
 for i in range(len(heuristic_methods)):
     method = heuristic_methods[i]
@@ -277,8 +288,11 @@ for i in range(len(heuristic_methods)):
 
     outputFilePolya = 'data/polya_post_weighted_heur_{opt}_uni_prop_first_comparison.csv'.format(opt=method)
 
+
     polya_sim_test(adjFile, ballFile, '', [budget, deltaR], max_n, num_sim, m_mem, num_nodes, Tlist,
                    outputFilePolya, '', opt_method, tenacity)
 
+
 '''
+
 
